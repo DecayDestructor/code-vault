@@ -19,7 +19,6 @@ import {
 } from '@clerk/clerk-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { update } from '../Contexts/store'
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -78,9 +77,7 @@ export default function Nav() {
       <NavbarMenu>
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item.label}-${index}`}>
-            <Link color="foreground" className="w-full" href="#" size="lg">
-              {item.label}
-            </Link>
+            <Link to={item.src}>{item.label}</Link>
           </NavbarMenuItem>
         ))}
       </NavbarMenu>

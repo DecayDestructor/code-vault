@@ -18,3 +18,8 @@
     @apply font-inter-tight miniHeader text-xl font-bold tracking-wide;
   }
 }
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}

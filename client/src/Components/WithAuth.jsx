@@ -2,7 +2,7 @@ import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { useUser } from '@clerk/clerk-react'
 
-export const WithAuth = ({ Component, rest }) => {
+const WithAuth = ({ Component, rest }) => {
   const { isSignedIn } = useUser()
   // Destructure 'component' from props
 
@@ -15,3 +15,5 @@ export const WithAuth = ({ Component, rest }) => {
   // Render the component with authentication
   return <Component {...rest} /> // Render the Component with the rest of the props
 }
+
+export default WithAuth
