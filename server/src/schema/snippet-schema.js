@@ -6,6 +6,11 @@ const snippetSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  date: {
+    type: Date,
+    default: Date.now,
+    required: true,
+  },
   userId: {
     type: String,
     required: true,

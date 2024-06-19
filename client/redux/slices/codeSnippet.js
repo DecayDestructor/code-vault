@@ -23,14 +23,23 @@ export const addSnippet = createAsyncThunk('addSnippet', async (snippet) => {
       error.response?.data?.message || error.message || 'Something went wrong'
     alert(`Error: ${errorMessage}`)
 
-    // Optionally, you can throw the error to be handled by the caller
     throw error
   }
 })
 
-export const getSnippets = createAsyncThunk('getSnippets', async () => {
-  const response = await axios.get('http://localhost:5000/code-snippets/')
-  return response.data
+export const getSnippets = createAsyncThunk('getSnippets', async (userId,page) => {
+  try {
+    // console.log("method called");
+    console.log("request made");
+    const pageNumber=parseInt(page,10)
+    const response = await axios.get(`http://localhost:5000/code-snippets/getAllByUserID/${userId}/${pageNumber}`)
+    
+    return response.data
+  }
+  catch (error) { 
+    // Check if error.response is defined to handle API errors
+    console.error(error)
+  }
 })
 
 const snippetSlice = createSlice({
@@ -50,6 +59,17 @@ const snippetSlice = createSlice({
       state.snippets.push(action.payload)
     })
     builder.addCase(addSnippet.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
+    })
+    builder.addCase(getSnippets.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getSnippets.fulfilled, (state, action) => {
+      state.loading = false
+      state.snippets = action.payload
+    })
+    builder.addCase(getSnippets.rejected, (state, action) => {
       state.loading = false
       state.error = action.error.message
     })

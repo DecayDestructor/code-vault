@@ -46,8 +46,6 @@ const CreateSnippet = () => {
   const [publicSnippet, setPublicSnippet] = useState(true)
 
   const dispatch = useDispatch()
-  const snippets = useSelector((state) => state)
-
   const handleSubmit = (e) => {
     e.preventDefault()
     const newSnippet = {

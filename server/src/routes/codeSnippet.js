@@ -3,10 +3,15 @@ import codeSnippet from '../schema/snippet-schema.js'
 import { v4 as uuidv4 } from 'uuid'
 const router = express.Router()
 
-router.get('/getAllByUserID/:userId', async (req, res) => {
-  const userId = req.params.userId
+router.get('/getAllByUserID/:userId/:page', async (req, res) => {
+  console.log('get request')
+  const { userId, page } = req.params
+  const pageNumber=parseInt(page, 10)
   try {
-    const snippets = await codeSnippet.find({ userId: userId })
+    const snippets = await codeSnippet.find({ userId: userId }).sort({
+      date: -1,
+      name: 1,
+    }).skip(pageNumber*1).limit(1)
     if (snippets.length === 0) {
       return res.status(404).send('No Records Found')
     }
@@ -19,7 +24,8 @@ router.get('/getAllByUserID/:userId', async (req, res) => {
 router.post('/', async (req, res) => {
   console.log('post request')
   const snippetID = uuidv4()
-  const snippet = new codeSnippet({ ...req.body, snippetID: snippetID })
+  const date = new Date()
+  const snippet = new codeSnippet({ ...req.body, snippetID: snippetID,date })
   const name = snippet.name
   try {
     const existingSnippet = await codeSnippet.findOne({ name })
