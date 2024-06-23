@@ -27,16 +27,26 @@ export const addSnippet = createAsyncThunk('addSnippet', async (snippet) => {
   }
 })
 
-export const getSnippets = createAsyncThunk('getSnippets', async (userId,page) => {
+export const getSnippets = createAsyncThunk('getSnippets', async (obj) => {
+  const { userId, pageNumber } = obj
   try {
-    // console.log("method called");
-    console.log("request made");
-    const pageNumber=parseInt(page,10)
-    const response = await axios.get(`http://localhost:5000/code-snippets/getAllByUserID/${userId}/${pageNumber}`)
-    
+    const response = await axios.get(
+      `http://localhost:5000/code-snippets/getAllByUserID/${userId}/${pageNumber}`
+    )
     return response.data
+  } catch (error) {
+    // Check if error.response is defined to handle API errors
+    console.error(error)
   }
-  catch (error) { 
+})
+
+export const deleteSnippet = createAsyncThunk('deleteSnippet', async (id) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:5000/code-snippets/${id}`
+    )
+    return response.data
+  } catch (error) {
     // Check if error.response is defined to handle API errors
     console.error(error)
   }

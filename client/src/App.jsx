@@ -4,6 +4,7 @@ import Layout from './Layout'
 import { Provider } from 'react-redux'
 import { store } from '../redux/store'
 import { lazy } from 'react'
+import { User } from 'lucide-react'
 
 const Login = lazy(() => {
   return import('./pages/Login')
@@ -39,11 +40,13 @@ const App = () => {
                 element={<WithAuth Component={CreateSnippet} />}
               />
               <Route
-                path="/user-snippets"
+                path="/user-snippets/:page"
                 element={<WithAuth Component={UserSnippets} />}
               />
             </Route>
+          <Route path="*" element={<h1 className='h-full w-full flex items-center justify-center mainHeader'>404 error</h1> } />
           </Routes>
+          {/*create a 404 route*/}
         </Router>
       </Provider>
     </div>

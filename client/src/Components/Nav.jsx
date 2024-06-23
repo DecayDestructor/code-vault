@@ -19,16 +19,10 @@ import {
 } from '@clerk/clerk-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-
+import { navItems as menuItems } from '../data/Navbar'
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const menuItems = [
-    { label: 'Home', index: 0, src: '/' },
-    { label: 'User Snippets', index: 1, src: '/user-snippets' },
-    { label: 'Create Snippets', index: 2, src: '/create-snippet' },
-    { label: 'Explore Snippets', index: 3, src: '/explore-snippets' },
-    { label: 'Help & Feedback', index: 4, src: '/help-and-feedback' },
-  ]
+  
 
   return (
     <Navbar

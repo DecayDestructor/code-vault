@@ -5,15 +5,20 @@ const router = express.Router()
 
 router.get('/getAllByUserID/:userId/:page', async (req, res) => {
   console.log('get request')
-  const { userId, page } = req.params
-  const pageNumber=parseInt(page, 10)
+  const { userId } = req.params
+  const { page } = req.params || 0
+  const pageNumber = parseInt(page, 10)
   try {
-    const snippets = await codeSnippet.find({ userId: userId }).sort({
-      date: -1,
-      name: 1,
-    }).skip(pageNumber*1).limit(1)
+    const snippets = await codeSnippet
+      .find({ userId: userId })
+      .sort({
+        date: -1, //sort by date descending
+        name: 1, //sort by name ascending
+      })
+      .skip(pageNumber * 10) //skip the previous pages snippets
+      .limit(10) //limit 10 snippets per page
     if (snippets.length === 0) {
-      return res.status(404).send('No Records Found')
+      return res.status(404).send(snippets)
     }
     res.status(200).send(snippets)
   } catch (error) {
@@ -25,7 +30,12 @@ router.post('/', async (req, res) => {
   console.log('post request')
   const snippetID = uuidv4()
   const date = new Date()
-  const snippet = new codeSnippet({ ...req.body, snippetID: snippetID,date })
+  console.log(date.toDateString())
+  const snippet = new codeSnippet({
+    ...req.body,
+    snippetID: snippetID,
+    date: date.toDateString(),
+  })
   const name = snippet.name
   try {
     const existingSnippet = await codeSnippet.findOne({ name })
@@ -39,6 +49,18 @@ router.post('/', async (req, res) => {
     res.status(201).send(snippet)
   } catch (error) {
     res.status(400).send(error)
+  }
+})
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+    const record = await codeSnippet.findByIdAndDelete(id)
+    if (!record) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+  } catch (error) {
+    res.status(500).send(error)
   }
 })
 
