@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 const router = express.Router()
 
 router.get('/getAllByUserID/:userId/:page', async (req, res) => {
-  console.log('get request')
+  // console.log('get request')
   const { userId } = req.params
   const { page } = req.params || 0
   const pageNumber = parseInt(page, 10)
@@ -26,8 +26,21 @@ router.get('/getAllByUserID/:userId/:page', async (req, res) => {
   }
 })
 
+router.get('/getOneBySnippetID/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    const snippet = await codeSnippet.findOne({ snippetID: id })
+    if (!snippet) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+    res.status(200).send(snippet)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
+
 router.post('/', async (req, res) => {
-  console.log('post request')
+  // console.log('post request')
   const snippetID = uuidv4()
   const date = new Date()
   console.log(date.toDateString())
@@ -55,7 +68,7 @@ router.post('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const id = req.params.id
-    const record = await codeSnippet.findByIdAndDelete(id)
+    const record = await codeSnippet.findOneAndDelete({ snippetID: id })
     if (!record) {
       return res.status(404).send({ message: 'Snippet not found.' })
     }

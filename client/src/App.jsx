@@ -26,6 +26,9 @@ const CreateSnippet = lazy(() => {
 const UserSnippets = lazy(() => {
   return import('./pages/UserSnippets')
 })
+const Snippet = lazy(() => {
+  return import('./pages/Snippet')
+})
 const App = () => {
   return (
     <div className="bg-white h-screen w-screen">
@@ -43,10 +46,17 @@ const App = () => {
                 path="/user-snippets/:page"
                 element={<WithAuth Component={UserSnippets} />}
               />
+              <Route path="/snippet/:snippetID" element={<Snippet />} />
             </Route>
-          <Route path="*" element={<h1 className='h-full w-full flex items-center justify-center mainHeader'>404 error</h1> } />
+            <Route
+              path="*"
+              element={
+                <h1 className="h-full w-full flex items-center justify-center mainHeader">
+                  404 error
+                </h1>
+              }
+            />
           </Routes>
-          {/*create a 404 route*/}
         </Router>
       </Provider>
     </div>

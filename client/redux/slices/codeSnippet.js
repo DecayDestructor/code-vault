@@ -40,6 +40,20 @@ export const getSnippets = createAsyncThunk('getSnippets', async (obj) => {
   }
 })
 
+export const getOneSnippet = createAsyncThunk(
+  'getOneSnippet',
+  async (snippetID) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/code-snippets/getOneBySnippetID/${snippetID}`
+      )
+      return response.data
+    } catch (error) {
+      console.error(error)
+    }
+  }
+)
+
 export const deleteSnippet = createAsyncThunk('deleteSnippet', async (id) => {
   try {
     const response = await axios.delete(
@@ -56,6 +70,7 @@ const snippetSlice = createSlice({
   name: 'fetchSnippet',
   initialState: {
     snippets: [],
+    oneSnippet: null,
     loading: false,
     error: null,
   },
@@ -82,6 +97,13 @@ const snippetSlice = createSlice({
     builder.addCase(getSnippets.rejected, (state, action) => {
       state.loading = false
       state.error = action.error.message
+    })
+    builder.addCase(getOneSnippet.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(getOneSnippet.fulfilled, (state, action) => {
+      state.loading = false
+      state.oneSnippet = action.payload
     })
   },
 })
