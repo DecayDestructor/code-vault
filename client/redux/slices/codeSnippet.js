@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, isPending } from '@reduxjs/toolkit'
 
 import axios from 'axios'
+import { toast } from 'sonner'
 
 export const addSnippet = createAsyncThunk('addSnippet', async (snippet) => {
   try {
@@ -14,14 +15,18 @@ export const addSnippet = createAsyncThunk('addSnippet', async (snippet) => {
       }
     )
     if (response.status === 200 || response.status === 201) {
-      alert('Snippet saved successfully')
+      toast.success('Snippet Added Successfully', {
+        duration: 5000,
+      })
     }
     return response.data
   } catch (error) {
     // Check if error.response is defined to handle API errors
     const errorMessage =
       error.response?.data?.message || error.message || 'Something went wrong'
-    alert(`Error: ${errorMessage}`)
+    toast.error(`${errorMessage}`, {
+      duration: 5000,
+    })
 
     throw error
   }
@@ -35,8 +40,11 @@ export const getSnippets = createAsyncThunk('getSnippets', async (obj) => {
     )
     return response.data
   } catch (error) {
-    // Check if error.response is defined to handle API errors
-    console.error(error)
+    const errorMessage =
+      error.response?.data?.message || error.message || 'Something went wrong'
+    toast.error(`${errorMessage}`, {
+      duration: 5000,
+    })
   }
 })
 
@@ -50,6 +58,11 @@ export const getOneSnippet = createAsyncThunk(
       return response.data
     } catch (error) {
       console.error(error)
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Something went wrong'
+      toast.error(`${errorMessage}`, {
+        duration: 5000,
+      })
     }
   }
 )

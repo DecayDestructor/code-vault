@@ -9,6 +9,7 @@ import {
   useDisclosure,
 } from '@nextui-org/react'
 import { TrashIcon } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function DeleteModal({ handleDelete }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
@@ -16,6 +17,9 @@ export default function DeleteModal({ handleDelete }) {
   const handleDeleteAndClose = () => {
     handleDelete()
     onClose()
+    toast.success('Snippet Deleted Successfully', {
+      duration: 5000,
+    })
   }
 
   return (

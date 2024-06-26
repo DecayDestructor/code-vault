@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { TrashIcon } from 'lucide-react'
+import { TrashIcon, Share2 } from 'lucide-react'
 import { deleteSnippet } from '../../redux/slices/codeSnippet'
 import DeleteModal from './DeleteModal'
 import { Link, Navigate } from 'react-router-dom'
+import { toast } from 'sonner'
 const SnippetsList = ({ snippets }) => {
   const [localSnippets, setLocalSnippets] = useState(snippets)
 

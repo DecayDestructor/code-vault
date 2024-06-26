@@ -18,7 +18,10 @@ router.get('/getAllByUserID/:userId/:page', async (req, res) => {
       .skip(pageNumber * 10) //skip the previous pages snippets
       .limit(10) //limit 10 snippets per page
     if (snippets.length === 0) {
-      return res.status(404).send(snippets)
+      return res.status(404).send({ message: 'No Snippets' })
+    }
+    if (!snippets) {
+      return res.status(404).send({ message: 'User not found' })
     }
     res.status(200).send(snippets)
   } catch (error) {

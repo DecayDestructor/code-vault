@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import { store } from '../redux/store'
 import { lazy } from 'react'
 import { User } from 'lucide-react'
+import { Toaster } from 'sonner'
 
 const Login = lazy(() => {
   return import('./pages/Login')
@@ -32,6 +33,7 @@ const Snippet = lazy(() => {
 const App = () => {
   return (
     <div className="bg-white h-screen w-screen">
+      <Toaster richColors position="top-center" className="font-inter-tight" />
       <Provider store={store}>
         <Router>
           <Routes>

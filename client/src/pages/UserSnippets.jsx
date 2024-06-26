@@ -76,6 +76,15 @@ const UserSnippets = () => {
           </div>
         )}
       </div>
+      <div>
+        <button
+          onClick={() => {
+            navigate('/user-snippets/1')
+          }}
+        >
+          Click
+        </button>
+      </div>
     </div>
   )
 }
