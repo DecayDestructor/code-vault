@@ -36,6 +36,11 @@ const snippetSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  allowedUsers: {
+    type: Array,
+    default: [],
+    required: false,
+  },
 })
 
 const SnippetModel = mongoose.model('SnippetModel', snippetSchema)

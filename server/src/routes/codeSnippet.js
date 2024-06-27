@@ -51,6 +51,7 @@ router.post('/', async (req, res) => {
     ...req.body,
     snippetID: snippetID,
     date: date.toDateString(),
+    allowedUsers: [],
   })
   const name = snippet.name
   try {
@@ -65,6 +66,55 @@ router.post('/', async (req, res) => {
     res.status(201).send(snippet)
   } catch (error) {
     res.status(400).send(error)
+  }
+})
+
+router.put('/allow-access', async (req, res) => {
+  const { snippetID, userId } = req.body
+
+  try {
+    const snippet = await codeSnippet.findOneAndUpdate(
+      { snippetID: snippetID }, // Find the document with this snippetID
+      { $addToSet: { allowedUsers: userId } }, // Add userId to the allowedUsers array if it doesn't already exist
+      { new: true } // Return the updated document
+    )
+
+    if (!snippet) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+
+    return res.status(200).send({
+      message: 'Access granted to ' + userId,
+      snippet: snippet,
+    })
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: 'Error updating snippet.', error: err })
+  }
+})
+router.put('/remove-access', async (req, res) => {
+  const { snippetID, userId } = req.body
+
+  try {
+    const snippet = await codeSnippet.findOneAndUpdate(
+      { snippetID: snippetID }, // Find the document with this snippetID
+      { $pull: { allowedUsers: userId } }, // Remove userId from the allowedUsers array if it exists
+      { new: true } // Return the updated document
+    )
+
+    if (!snippet) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+
+    return res.status(200).send({
+      message: 'Access removed for ' + userId,
+      snippet: snippet,
+    })
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: 'Error updating snippet.', error: err })
   }
 })
 

@@ -56,7 +56,9 @@ const Snippet = () => {
   }
   if (
     (!snippet.oneSnippet.publicSnippet && !isSignedIn) ||
-    (isSignedIn && snippet.oneSnippet.userId !== user.id)
+    (isSignedIn &&
+      snippet.oneSnippet.userId !== user.id &&
+      !snippet.oneSnippet.allowedUsers.includes(user.id))
   ) {
     return (
       <div className="h-full w-full flex items-center justify-center flex-col gap-5">
