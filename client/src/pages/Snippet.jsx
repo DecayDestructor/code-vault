@@ -75,6 +75,15 @@ const Snippet = () => {
           <h1 className=" font-bold tracking-wid max-md:text-lg text-2xl p-0 flex">
             {snippet.oneSnippet.name}
           </h1>
+          <div className="inline-flex gap-3 items-center p-3 bg-gray-50 rounded-md">
+            {/* add another api endpoint to show the details of the owner of the snippet */}
+            <img
+              src={`${user.imageUrl}`}
+              className="rounded-full h-8"
+              alt="user"
+            ></img>
+            <span>{user.fullName}</span>
+          </div>
           <p className="text-gray-600 max-md:text-sm">
             {snippet.oneSnippet.description}
           </p>
