@@ -44,5 +44,4 @@ const snippetSchema = new mongoose.Schema({
 })
 
 const SnippetModel = mongoose.model('SnippetModel', snippetSchema)
-
 export default SnippetModel
