@@ -2,7 +2,7 @@ import { useUser } from '@clerk/clerk-react'
 import { Button, snippet } from '@nextui-org/react'
 import { Eye, EyeOffIcon } from 'lucide-react'
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { addSnippet } from '../../redux/slices/codeSnippet'
 import {
   Dropdown,

@@ -69,62 +69,16 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.put('/allow-access', async (req, res) => {
-  const { snippetID, userId } = req.body
+// add one get route to get all the allowedUsers to a snippet
 
+router.get('/allowed-users', async (req, res) => {
+  const { snippetID } = req.body
   try {
-    const snippet = await codeSnippet.findOneAndUpdate(
-      { snippetID: snippetID }, // Find the document with this snippetID
-      { $addToSet: { allowedUsers: userId } }, // Add userId to the allowedUsers array if it doesn't already exist
-      { new: true } // Return the updated document
-    )
-
+    const snippet = await codeSnippet.findOne({ snippetID: snippetID })
     if (!snippet) {
       return res.status(404).send({ message: 'Snippet not found.' })
     }
-
-    return res.status(200).send({
-      message: 'Access granted to ' + userId,
-      snippet: snippet,
-    })
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ message: 'Error updating snippet.', error: err })
-  }
-})
-router.put('/remove-access', async (req, res) => {
-  const { snippetID, userId } = req.body
-
-  try {
-    const snippet = await codeSnippet.findOneAndUpdate(
-      { snippetID: snippetID }, // Find the document with this snippetID
-      { $pull: { allowedUsers: userId } }, // Remove userId from the allowedUsers array if it exists
-      { new: true } // Return the updated document
-    )
-
-    if (!snippet) {
-      return res.status(404).send({ message: 'Snippet not found.' })
-    }
-
-    return res.status(200).send({
-      message: 'Access removed for ' + userId,
-      snippet: snippet,
-    })
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ message: 'Error updating snippet.', error: err })
-  }
-})
-
-router.delete('/:id', async (req, res) => {
-  try {
-    const id = req.params.id
-    const record = await codeSnippet.findOneAndDelete({ snippetID: id })
-    if (!record) {
-      return res.status(404).send({ message: 'Snippet not found.' })
-    }
+    res.status(200).send(snippet.allowedUsers)
   } catch (error) {
     res.status(500).send(error)
   }

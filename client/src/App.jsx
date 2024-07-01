@@ -1,10 +1,8 @@
-import Nav from './Components/Nav'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './Layout'
 import { Provider } from 'react-redux'
 import { store } from '../redux/store'
 import { lazy } from 'react'
-import { User } from 'lucide-react'
 import { Toaster } from 'sonner'
 
 const Login = lazy(() => {

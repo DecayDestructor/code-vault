@@ -6,7 +6,31 @@ import CustomCard from '../Components/CustomCard'
 import { redirect, useNavigate } from 'react-router-dom'
 import { Code, Github, Linkedin, User } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useUser } from '@clerk/clerk-react'
+import { useEffect } from 'react'
+import { getUser, registerUser } from '../../redux/slices/userManagement'
 const LandingPage = () => {
+  const { user, isSignedIn } = useUser()
+  const dispatch = useDispatch()
+  const userState = useSelector((state) => state.userReducer)
+  useEffect(() => {
+    const checkAndRegisterUser = async () => {
+      if (isSignedIn) {
+        dispatch(getUser(user.id))
+        if (!userState.user) {
+          dispatch(
+            registerUser({
+              name: user.fullName,
+              email: user.primaryEmailAddress.emailAddress,
+              userId: user.id,
+              profilePicture: user.imageUrl,
+            })
+          )
+        }
+      }
+    }
+    checkAndRegisterUser()
+  }, [dispatch, isSignedIn, userState.user])
   const textVariants = {
     hidden: { opacity: 0 },
     visible: {

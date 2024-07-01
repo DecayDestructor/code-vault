@@ -9,11 +9,11 @@ import {
   useDisclosure,
   useSelect,
 } from '@nextui-org/react'
-import { Edit } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
-import { allowAccess } from '../../redux/slices/userManagement'
+import { allowAccess, removeAccess } from '../../redux/slices/userManagement'
 
-export default function AddUserIdModal({ snippetId }) {
+export default function RemoveUserIdModal({ snippetId }) {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
   const [email, setEmail] = useState('')
   const dispatch = useDispatch()
@@ -22,13 +22,13 @@ export default function AddUserIdModal({ snippetId }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     onClose()
-    dispatch(allowAccess({ email: email, snippetId: snippetId }))
+    dispatch(removeAccess({ email: email, snippetId: snippetId }))
   }
 
   return (
     <>
       <button onClick={onOpen}>
-        <Edit size={16} />
+        <Trash2 size={16} />
       </button>
       <Modal
         backdrop="blur"
@@ -60,7 +60,7 @@ export default function AddUserIdModal({ snippetId }) {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1 items-center">
-                Give access to a new user
+                Remove Access from a user
               </ModalHeader>
               <ModalBody>
                 <form

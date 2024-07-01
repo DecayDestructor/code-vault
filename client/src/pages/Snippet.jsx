@@ -11,9 +11,11 @@ import 'ace-builds/src-noconflict/ext-language_tools'
 import { useUser } from '@clerk/clerk-react'
 import { toast } from 'sonner'
 import AddUserIdModal from '../Components/AddUserIdModal'
+import RemoveUserIdModal from '../Components/RemoveUserIdModal'
+import ShowUserIdModal from '../Components/ShowUserIdModal'
 const Snippet = () => {
   const { snippetID } = useParams()
-  const snippet = useSelector((state) => state.snippet)
+  const snippet = useSelector((state) => state.snippetReducer)
   const dispatch = useDispatch()
   const { user, isSignedIn } = useUser()
   useEffect(() => {
@@ -93,6 +95,8 @@ const Snippet = () => {
           <div className="max-md:text-sm flex gap-5 items-center">
             <p>{snippet.oneSnippet.publicSnippet ? 'Public' : 'Private'}</p>
             <AddUserIdModal snippetId={snippetID} />
+            <RemoveUserIdModal snippetId={snippetID} />
+            <ShowUserIdModal allowedUsers={snippet.oneSnippet.allowedUsers} />
           </div>
           <div className="mb-4 max-md:text-sm">
             <p>{snippet.oneSnippet.date}</p>{' '}

@@ -9,7 +9,7 @@ import { MoonLoader } from 'react-spinners'
 const UserSnippets = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const snippets = useSelector((state) => state.snippet)
+  const snippets = useSelector((state) => state.snippetReducer)
   const user = useUser()
   const { page } = useParams()
   const pageNumber = parseInt(page, 10)
