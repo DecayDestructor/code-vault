@@ -10,6 +10,7 @@ import 'ace-builds/src-noconflict/theme-github'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import { useUser } from '@clerk/clerk-react'
 import { toast } from 'sonner'
+import AddUserIdModal from '../Components/AddUserIdModal'
 const Snippet = () => {
   const { snippetID } = useParams()
   const snippet = useSelector((state) => state.snippet)
@@ -89,8 +90,9 @@ const Snippet = () => {
           </p>
         </div>
         <div className="flex flex-col gap-4 max-lg:items-center ">
-          <div className="max-md:text-sm ">
+          <div className="max-md:text-sm flex gap-5 items-center">
             <p>{snippet.oneSnippet.publicSnippet ? 'Public' : 'Private'}</p>
+            <AddUserIdModal snippetId={snippetID} />
           </div>
           <div className="mb-4 max-md:text-sm">
             <p>{snippet.oneSnippet.date}</p>{' '}
