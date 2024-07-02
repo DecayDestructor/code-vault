@@ -12,17 +12,19 @@ import {
 import { Edit, Trash2 } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { allowAccess, removeAccess } from '../../redux/slices/userManagement'
+import { useUser } from '@clerk/clerk-react'
 
 export default function RemoveUserIdModal({ snippetId }) {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
   const [email, setEmail] = useState('')
   const dispatch = useDispatch()
-  const state = useSelector((state) => state.snippetReducer.oneSnippet)
-  console.log(state)
+  const { user } = useUser()
   const handleSubmit = (e) => {
     e.preventDefault()
     onClose()
-    dispatch(removeAccess({ email: email, snippetId: snippetId }))
+    dispatch(
+      removeAccess({ email: email, snippetId: snippetId, sender: user.id })
+    )
   }
 
   return (

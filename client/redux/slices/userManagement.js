@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, isPending } from '@reduxjs/toolkit'
 import axios from 'axios'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 export const getUser = createAsyncThunk('getUser', async (userId) => {
@@ -48,7 +49,7 @@ export const allowAccess = createAsyncThunk('allowAccess', async (obj) => {
     toast.success(response.data?.message, {
       duration: 5000,
     })
-    return response.data.user
+    return response.data
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || error.message || 'Something went wrong'
@@ -67,7 +68,7 @@ export const removeAccess = createAsyncThunk('removeAccess', async (obj) => {
     toast.success(response.data?.message, {
       duration: 5000,
     })
-    return response.data.user
+    return response.data
   } catch (error) {
     const errorMessage =
       error.response?.data?.message || error.message || 'Something went wrong'
@@ -76,6 +77,7 @@ export const removeAccess = createAsyncThunk('removeAccess', async (obj) => {
     })
   }
 })
+
 const userStateSlice = createSlice({
   name: 'UserSlice',
   initialState: {
@@ -84,11 +86,22 @@ const userStateSlice = createSlice({
     error: null,
     access: [],
   },
-  reducers: {},
+  reducers: {
+    setAccess: (state, action) => {
+      console.log(action.payload)
+      state.access = action.payload.allowedUsers
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(allowAccess.fulfilled, (state, action) => {
-      state.access = [...state.access, action.payload.email]
-      state.isLoading = false
+      const email = action.payload.user.email
+      console.log(email)
+
+      return {
+        ...state,
+        isLoading: false,
+        access: [...state.access, email],
+      }
     })
     builder.addCase(allowAccess.pending, (state) => {
       state.isLoading = true
@@ -98,10 +111,13 @@ const userStateSlice = createSlice({
       state.error = action.error.message
     })
     builder.addCase(removeAccess.fulfilled, (state, action) => {
-      state.access = state.access.filter(
-        (access) => access !== action.payload.email
-      )
-      state.isLoading = false
+      return {
+        ...state,
+        isLoading: false,
+        access: state.access.filter(
+          (access) => access !== action.payload.user.email
+        ),
+      }
     })
     builder.addCase(removeAccess.pending, (state) => {
       state.isLoading = true
@@ -112,5 +128,5 @@ const userStateSlice = createSlice({
     })
   },
 })
-
+export const { setAccess } = userStateSlice.actions
 export default userStateSlice.reducer

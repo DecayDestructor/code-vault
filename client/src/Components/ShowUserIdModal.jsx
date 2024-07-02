@@ -13,9 +13,7 @@ import { getOneSnippet } from '../../redux/slices/codeSnippet'
 import { User } from 'lucide-react'
 
 export default function ShowUserIdModal() {
-  const allowedUsers = useSelector(
-    (state) => state.snippetReducer.oneSnippet.allowedUsers
-  )
+  const allowedUsers = useSelector((state) => state.userReducer.access)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   return (
     <>

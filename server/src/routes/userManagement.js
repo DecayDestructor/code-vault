@@ -34,13 +34,39 @@ router.post('/register', async (req, res) => {
   }
 })
 router.post('/add-access', async (req, res) => {
-  const { email, snippetId } = req.body
+  const { email, snippetId, sender } = req.body
+  console.log(email, snippetId)
   try {
-    const user = await UserModel.findOne({ email: email })
-    console.log('Access granted')
+    const user = await UserModel.findOne({ email: email }) //find the targeted user using email
     if (!user) {
       return res.status(404).send({ message: 'User not found.' })
     }
+    const record = await codeSnippet.findOne({ snippetID: snippetId }) //find the targeted snippet using snippetID
+    // console.log(record)
+    // console.log(user)
+    if (record.publicSnippet) {
+      return res
+        .status(400)
+        .json({ message: 'Cannot add access to a public snippet' })
+    }
+    if (record.userId !== sender) {
+      return res
+        .status(400)
+        .json({ message: 'You are not the owner of this snippet' })
+    }
+    if (record.userId == user.userId) {
+      console.log('Owner')
+      return res
+        .status(400)
+        .json({ message: 'User is the owner of the snippet' })
+    }
+
+    if (record.allowedUsers.includes(user.email)) {
+      return res
+        .status(200)
+        .json({ message: 'User already has access to this snippet' })
+    }
+
     const snippet = await codeSnippet.findOneAndUpdate(
       { snippetID: snippetId }, // Find the document with this snippetID
       { $addToSet: { allowedUsers: user.email } }, // Add userId to the allowedUsers array if it doesn't already exist
@@ -62,14 +88,38 @@ router.post('/add-access', async (req, res) => {
 })
 
 router.post('/remove-access', async (req, res) => {
-  const { email, snippetId } = req.body
+  const { email, snippetId, sender } = req.body
 
   try {
-    const user = await UserModel.findOne({ email: email })
+    const user = await UserModel.findOne({ email: email }) //find the targeted user using email
     if (!user) {
       return res.status(404).send({ message: 'User not found.' })
     }
-
+    const record = await codeSnippet.findOne({ snippetID: snippetId }) //find the targeted snippet using SnippetId
+    if (!record) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+    if (record.publicSnippet) {
+      return res
+        .status(400)
+        .json({ message: 'Cannot remove access from a public snippet' })
+    }
+    if (record.userId == user.userId) {
+      console.log('Owner')
+      return res
+        .status(400)
+        .json({ message: 'User is the owner of the snippet' })
+    }
+    if (record.userId !== sender) {
+      return res
+        .status(400)
+        .json({ message: 'You are not the owner of this snippet' })
+    }
+    if (!record.allowedUsers.includes(user.email)) {
+      return res
+        .status(200)
+        .json({ message: 'User does not have access to this snippet' })
+    }
     const snippet = await codeSnippet.findOneAndUpdate(
       { snippetID: snippetId }, // Find the document with this snippetID
       { $pull: { allowedUsers: user.email } }, // Remove userId from the allowedUsers array if it exists
@@ -87,6 +137,23 @@ router.post('/remove-access', async (req, res) => {
     })
   } catch (error) {
     res.status(400).json({ error: error.message })
+  }
+})
+
+router.get('/get-owner/:snippetId', async (req, res) => {
+  const { snippetId } = req.params
+  try {
+    const snippet = await codeSnippet.findOne({ snippetID: snippetId })
+    if (!snippet) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+    const user = await UserModel.findOne({ userId: snippet.userId })
+    if (!user) {
+      return res.status(404).send({ message: 'User not found.' })
+    }
+    res.json(user)
+  } catch (error) {
+    res.status(500).send({ message: 'Server Error.' })
   }
 })
 

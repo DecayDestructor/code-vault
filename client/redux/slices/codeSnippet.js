@@ -107,8 +107,13 @@ const snippetSlice = createSlice({
       state.loading = true
     })
     builder.addCase(addSnippet.fulfilled, (state, action) => {
-      state.loading = false
-      state.snippets.push(action.payload)
+      // state.loading = false
+      // state.snippets.concat(action.payload)
+      return {
+        ...state,
+        loading: false,
+        snippets: [...state.snippets, action.payload],
+      }
     })
     builder.addCase(addSnippet.rejected, (state, action) => {
       state.loading = false
@@ -136,11 +141,13 @@ const snippetSlice = createSlice({
       state.loading = true
     })
     builder.addCase(deleteSnippet.fulfilled, (state, action) => {
-      state.loading = false
-      console.log(action)
-      state.snippets = state.snippets.filter(
-        (snippet) => snippet._id !== action.payload.snippet._id
-      )
+      return {
+        ...state,
+        loading: false,
+        snippets: state.snippets.filter(
+          (snippet) => snippet._id !== action.payload.snippet._id
+        ),
+      }
     })
     builder.addCase(deleteSnippet.rejected, (state, action) => {
       state.loading = false
