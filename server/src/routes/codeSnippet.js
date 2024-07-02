@@ -71,14 +71,31 @@ router.post('/', async (req, res) => {
 
 // add one get route to get all the allowedUsers to a snippet
 
-router.get('/allowed-users', async (req, res) => {
-  const { snippetID } = req.body
+router.get('/allowed-users/:snippetId', async (req, res) => {
+  const { snippetId } = req.params
   try {
-    const snippet = await codeSnippet.findOne({ snippetID: snippetID })
+    const snippet = await codeSnippet.findOne({ snippetID: snippetId })
     if (!snippet) {
       return res.status(404).send({ message: 'Snippet not found.' })
     }
     res.status(200).send(snippet.allowedUsers)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
+
+router.delete('/:id', async (req, res) => {
+  console.log('Delete')
+  try {
+    const id = req.params.id
+    const record = await codeSnippet.findOneAndDelete({ snippetID: id })
+    console.log(record)
+    if (!record) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+    return res
+      .status(200)
+      .send({ message: 'Snippet deleted successfully', snippet: record })
   } catch (error) {
     res.status(500).send(error)
   }

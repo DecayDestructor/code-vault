@@ -16,6 +16,7 @@ import ShowUserIdModal from '../Components/ShowUserIdModal'
 const Snippet = () => {
   const { snippetID } = useParams()
   const snippet = useSelector((state) => state.snippetReducer)
+  console.log(snippet)
   const dispatch = useDispatch()
   const { user, isSignedIn } = useUser()
   useEffect(() => {
@@ -61,7 +62,7 @@ const Snippet = () => {
     (!snippet.oneSnippet.publicSnippet && !isSignedIn) ||
     (isSignedIn &&
       snippet.oneSnippet.userId !== user.id &&
-      !snippet.oneSnippet.allowedUsers.includes(user.id))
+      !snippet.oneSnippet.allowedUsers.includes())
   ) {
     return (
       <div className="h-full w-full flex items-center justify-center flex-col gap-5">

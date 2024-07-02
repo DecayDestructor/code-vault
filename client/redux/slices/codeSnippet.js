@@ -79,6 +79,20 @@ export const deleteSnippet = createAsyncThunk('deleteSnippet', async (id) => {
   }
 })
 
+export const allowedUsers = createAsyncThunk(
+  'allowedUsers',
+  async (snippetId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/code-snippets/allowedUsers/${snippetId}`
+      )
+      return response.data
+    } catch (error) {
+      console.error(error)
+    }
+  }
+)
+
 const snippetSlice = createSlice({
   name: 'fetchSnippet',
   initialState: {
@@ -117,6 +131,20 @@ const snippetSlice = createSlice({
     builder.addCase(getOneSnippet.fulfilled, (state, action) => {
       state.loading = false
       state.oneSnippet = action.payload
+    })
+    builder.addCase(deleteSnippet.pending, (state, action) => {
+      state.loading = true
+    })
+    builder.addCase(deleteSnippet.fulfilled, (state, action) => {
+      state.loading = false
+      console.log(action)
+      state.snippets = state.snippets.filter(
+        (snippet) => snippet._id !== action.payload.snippet._id
+      )
+    })
+    builder.addCase(deleteSnippet.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
     })
   },
 })

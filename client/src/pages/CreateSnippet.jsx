@@ -2,7 +2,7 @@ import { useUser } from '@clerk/clerk-react'
 import { Button, snippet } from '@nextui-org/react'
 import { Eye, EyeOffIcon } from 'lucide-react'
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addSnippet } from '../../redux/slices/codeSnippet'
 import {
   Dropdown,
@@ -38,6 +38,8 @@ const CodeEditorComponent = ({ mode, className, value, onChange }) => {
 }
 
 const CreateSnippet = () => {
+  const state = useSelector((state) => state.snippetReducer)
+  console.log(state)
   const user = useUser()
   const [selectedLanguage, setSelectedLanguage] = useState('JavaScript')
   const [value, setValue] = useState('')
