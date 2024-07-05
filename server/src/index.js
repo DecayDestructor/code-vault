@@ -5,6 +5,8 @@ import cors from 'cors'
 const app = express()
 import codeSnippetRouter from './routes/codeSnippet.js'
 import userManagementRouter from './routes/userManagement.js'
+import { diff } from 'jsondiffpatch'
+
 dotenv.config()
 const PORT = process.env.PORT || 5000
 app.use(express.json())
@@ -19,6 +21,7 @@ mongoose
   .catch((err) => console.error(' could not connect to db' + err))
 app.use('/code-snippets', codeSnippetRouter)
 app.use('/user-management', userManagementRouter)
+
 app.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`)
 })
