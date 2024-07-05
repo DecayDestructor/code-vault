@@ -79,20 +79,30 @@ export const deleteSnippet = createAsyncThunk('deleteSnippet', async (id) => {
   }
 })
 
-export const allowedUsers = createAsyncThunk(
-  'allowedUsers',
-  async (snippetId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/code-snippets/allowedUsers/${snippetId}`
-      )
-      return response.data
-    } catch (error) {
-      console.error(error)
-    }
+export const editSnippet = createAsyncThunk('editSnippet', async (snippet) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:5000/code-snippets/edit-snippet`,
+      snippet,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    toast.success('Snippet updated successfully', {
+      duration: 5000,
+    })
+    return response.data
+  } catch (error) {
+    console.error(error)
+    const errorMessage =
+      error.response?.data?.message || error.message || 'Something went wrong'
+    toast.error(`${errorMessage}`, {
+      duration: 5000,
+    })
   }
-)
-
+})
 const snippetSlice = createSlice({
   name: 'fetchSnippet',
   initialState: {
@@ -137,7 +147,7 @@ const snippetSlice = createSlice({
       state.loading = false
       state.oneSnippet = action.payload
     })
-    builder.addCase(deleteSnippet.pending, (state, action) => {
+    builder.addCase(deleteSnippet.pending, (state) => {
       state.loading = true
     })
     builder.addCase(deleteSnippet.fulfilled, (state, action) => {
@@ -150,6 +160,23 @@ const snippetSlice = createSlice({
       }
     })
     builder.addCase(deleteSnippet.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
+    })
+    builder.addCase(editSnippet.pending, (state) => {
+      state.loading = true
+    })
+    builder.addCase(editSnippet.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        snippets: state.snippets.map((snippet) =>
+          snippet._id === action.payload._id ? action.payload : snippet
+        ),
+        oneSnippet: action.payload,
+      }
+    })
+    builder.addCase(editSnippet.rejected, (state, action) => {
       state.loading = false
       state.error = action.error.message
     })

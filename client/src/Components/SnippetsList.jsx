@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { deleteSnippet } from '../../redux/slices/codeSnippet'
 import DeleteModal from './DeleteModal'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { Edit } from 'lucide-react'
 const SnippetsList = ({ snippets }) => {
   const [localSnippets, setLocalSnippets] = useState(snippets)
 
@@ -15,7 +16,6 @@ const SnippetsList = ({ snippets }) => {
       localSnippets.filter((snippet) => snippet.snippetID !== id)
     )
   }
-
   return (
     <div className="flex flex-col gap-7">
       {localSnippets.map((snippet) => (
@@ -45,7 +45,7 @@ const SnippetCard = ({
   onDelete,
 }) => {
   const dispatch = useDispatch()
-
+  const navigate = useNavigate()
   const handleDeleteClick = () => {
     onDelete(snippetID)
     dispatch(deleteSnippet(snippetID))
@@ -74,7 +74,16 @@ const SnippetCard = ({
       >
         <TrashIcon />
       </button> */}
-      <DeleteModal handleDelete={handleDeleteClick} />
+      <div className="flex gap-5 justify-between items-center">
+        <DeleteModal handleDelete={handleDeleteClick} />
+        <button
+          onClick={() => {
+            navigate(`/edit-snippet/${snippetID}`)
+          }}
+        >
+          <Edit size={18} />
+        </button>
+      </div>
     </div>
   )
 }

@@ -25,7 +25,7 @@ export default function DeleteModal({ handleDelete }) {
   return (
     <>
       <button onClick={onOpen} className="">
-        <TrashIcon color="red" />
+        <TrashIcon color="red" size={18} />
       </button>
       <Modal
         backdrop="blur"

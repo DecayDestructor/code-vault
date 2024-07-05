@@ -28,6 +28,10 @@ const UserSnippets = lazy(() => {
 const Snippet = lazy(() => {
   return import('./pages/Snippet')
 })
+
+const EditSnippet = lazy(() => {
+  return import('./pages/EditSnippet')
+})
 const App = () => {
   return (
     <div className="bg-white h-screen w-screen">
@@ -40,13 +44,24 @@ const App = () => {
               <Route index element={<LandingPage />} />
               <Route
                 path="/create-snippet"
-                element={<WithAuth Component={CreateSnippet} />}
+                element={
+                  <WithAuth Component={CreateSnippet} route="/create-snippet" />
+                }
               />
               <Route
                 path="/user-snippets/:page"
-                element={<WithAuth Component={UserSnippets} />}
+                element={
+                  <WithAuth
+                    Component={UserSnippets}
+                    route="/user-snippets/:page"
+                  />
+                }
               />
               <Route path="/snippet/:snippetID" element={<Snippet />} />
+              <Route
+                path="/edit-snippet/:snippetID"
+                element={<WithAuth Component={EditSnippet} />}
+              />
             </Route>
             <Route
               path="*"
