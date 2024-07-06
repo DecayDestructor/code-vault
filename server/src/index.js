@@ -6,7 +6,6 @@ const app = express()
 import codeSnippetRouter from './routes/codeSnippet.js'
 import userManagementRouter from './routes/userManagement.js'
 import versionControlRouter from './routes/versionControl.js'
-import { diff } from 'jest-diff'
 import compareObjects from './utils/compareObjects.js'
 
 dotenv.config()

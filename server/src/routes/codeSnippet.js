@@ -88,34 +88,6 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
-router.put('/edit-snippet', async (req, res) => {
-  const snippet = req.body
-  //write logic for route to update snippet
-  // console.log(snippet)
-  console.log('update snippet')
-  try {
-    const record = await codeSnippet.findOne({ snippetID: snippet.snippetID })
-    if (record.userId !== snippet.userId) {
-      return res
-        .status(403)
-        .send({ message: 'Unauthorized to update snippet.' })
-    }
-    if (!record) {
-      return res.status(404).send({ message: 'Snippet not found.' })
-    }
-    const updatedSnippet = await codeSnippet.findOneAndUpdate(
-      { snippetID: snippet.snippetID },
-      snippet,
-      { new: true }
-    )
-    if (!updatedSnippet) {
-      return res.status(404).send({ message: 'Snippet not found.' })
-    }
-    res.status(200).send(updatedSnippet)
-  } catch (error) {
-    console.log(error)
-    res.status(500).send(error)
-  }
-})
+
 
 export default router

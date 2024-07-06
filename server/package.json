@@ -3,7 +3,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jest-diff": "^29.7.0",
     "mongoose": "^8.4.1",
+    "strip-ansi": "^7.1.0",
     "uuid": "^10.0.0"
   },
   "name": "server",

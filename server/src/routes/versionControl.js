@@ -2,6 +2,8 @@ import express from 'express'
 import VersionControl from '../schema/version-control-schema.js'
 import codeSnippet from '../schema/snippet-schema.js'
 import compareObjects from '../utils/compareObjects.js'
+import { diff } from 'jest-diff'
+import { generateStructuredDiff } from '../utils/generateStructuredDiff.js'
 const router = express.Router()
 
 router.put('/edit', async (req, res) => {
@@ -31,7 +33,7 @@ router.put('/edit', async (req, res) => {
       ...snippetUpdates,
     }
     console.log(recordObj)
-    console.log()
+    console.log(updatedSnippet)
     // Check if updatedSnippet is equal to record before attempting update
     if (JSON.stringify(updatedSnippet) === JSON.stringify(recordObj)) {
       console.log('No changes detected')
@@ -40,8 +42,8 @@ router.put('/edit', async (req, res) => {
         message: 'No changes detected. No update performed.',
       }) // Return the unchanged record
     }
-    console.log(recordObj, updatedSnippet)
-
+    // console.log(recordObj, updatedSnippet)
+    console.log(diff(recordObj, updatedSnippet))
     const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
       { snippetID: snippetUpdates.snippetID },
       {
@@ -55,7 +57,10 @@ router.put('/edit', async (req, res) => {
       { new: true }
     )
 
-    const versionControlSnippet = compareObjects(record, snippetUpdates)
+    const versionControlSnippet = generateStructuredDiff(
+      recordObj,
+      updatedSnippet
+    )
     console.log(versionControlSnippet)
     const newSnippet = new VersionControl({
       snippetID: snippetUpdates.snippetID,
@@ -64,7 +69,6 @@ router.put('/edit', async (req, res) => {
       diff: { ...versionControlSnippet },
     })
     await newSnippet.save()
-    console.log(newSnippet.diff)
     return res.status(200).send(updatedSnippetDoc)
   } catch (error) {
     console.log(error)
