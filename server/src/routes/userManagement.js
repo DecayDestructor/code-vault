@@ -44,6 +44,9 @@ router.post('/add-access', async (req, res) => {
     const record = await codeSnippet.findOne({ snippetID: snippetId }) //find the targeted snippet using snippetID
     // console.log(record)
     // console.log(user)
+    if (!record) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
     if (record.publicSnippet) {
       return res
         .status(400)
@@ -72,11 +75,6 @@ router.post('/add-access', async (req, res) => {
       { $addToSet: { allowedUsers: user.email } }, // Add userId to the allowedUsers array if it doesn't already exist
       { new: true } // Return the updated document
     )
-
-    if (!snippet) {
-      return res.status(404).send({ message: 'Snippet not found.' })
-    }
-
     return res.status(200).send({
       message: 'Access granted to ' + user.name,
       snippet: snippet,
@@ -88,6 +86,7 @@ router.post('/add-access', async (req, res) => {
 })
 
 router.post('/remove-access', async (req, res) => {
+  //used in user-management slice to add or remove access
   const { email, snippetId, sender } = req.body
 
   try {
@@ -96,6 +95,9 @@ router.post('/remove-access', async (req, res) => {
       return res.status(404).send({ message: 'User not found.' })
     }
     const record = await codeSnippet.findOne({ snippetID: snippetId }) //find the targeted snippet using SnippetId
+    if (!record) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
     if (!record) {
       return res.status(404).send({ message: 'Snippet not found.' })
     }
@@ -125,11 +127,6 @@ router.post('/remove-access', async (req, res) => {
       { $pull: { allowedUsers: user.email } }, // Remove userId from the allowedUsers array if it exists
       { new: true } // Return the updated document
     )
-
-    if (!snippet) {
-      return res.status(404).send({ message: 'Snippet not found.' })
-    }
-
     return res.status(200).send({
       message: 'Access removed for ' + user.name,
       snippet: snippet,
@@ -140,6 +137,7 @@ router.post('/remove-access', async (req, res) => {
   }
 })
 
+//used in snippet.jsx to get the pfp and name of the user.
 router.get('/get-owner/:snippetId', async (req, res) => {
   const { snippetId } = req.params
   try {

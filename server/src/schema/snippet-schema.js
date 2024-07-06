@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { version } from 'mongoose'
 
 const snippetSchema = new mongoose.Schema({
   snippetID: {
@@ -40,6 +40,11 @@ const snippetSchema = new mongoose.Schema({
     type: Array,
     default: [],
     required: false,
+  },
+  version: {
+    type: Number,
+    default: 0,
+    required: true,
   },
 })
 

@@ -82,7 +82,7 @@ export const deleteSnippet = createAsyncThunk('deleteSnippet', async (id) => {
 export const editSnippet = createAsyncThunk('editSnippet', async (snippet) => {
   try {
     const response = await axios.put(
-      `http://localhost:5000/code-snippets/edit-snippet`,
+      `http://localhost:5000/edit-snippets/edit`,
       snippet,
       {
         headers: {
