@@ -74,6 +74,8 @@ const LandingPage = () => {
       transition: {
         stiffness: 200,
         damping: 10,
+        // staggerChildren: 0.8,
+        // delayChildren: 0.4,
       },
     },
   }
@@ -113,10 +115,7 @@ const LandingPage = () => {
       animate="visible"
       className="mt-10 min-w-full"
     >
-      <motion.section
-        variants={mainVariants}
-        className="min-w-full flex flex-col "
-      >
+      <motion.div variants={mainVariants} className="min-w-full flex flex-col ">
         <motion.h1
           className="font-lato text-center text-black tracking-widest"
           variants={textVariants}
@@ -138,8 +137,8 @@ const LandingPage = () => {
             Saving your snippets just got easier
           </motion.span>
         </motion.h1>
-      </motion.section>
-      <motion.section className="mt-40 px-20">
+      </motion.div>
+      <motion.div className="mt-40 px-20">
         <PopUpHeader text="Why Code Vault?" variants={letterVariants} />
         <motion.div
           variants={mainVariants}
@@ -161,7 +160,7 @@ const LandingPage = () => {
             )
           })}
         </motion.div>
-      </motion.section>
+      </motion.div>
       <motion.section className="mt-40 px-20" variants={mainVariants}>
         <PopUpHeader text="Features" variants={mainVariants} />
         <motion.div

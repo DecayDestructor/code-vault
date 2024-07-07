@@ -1,8 +1,6 @@
 import express from 'express'
 import VersionControl from '../schema/version-control-schema.js'
 import codeSnippet from '../schema/snippet-schema.js'
-import compareObjects from '../utils/compareObjects.js'
-import { diff } from 'jest-diff'
 import { generateStructuredDiff } from '../utils/generateStructuredDiff.js'
 const router = express.Router()
 
@@ -42,8 +40,7 @@ router.put('/edit', async (req, res) => {
         message: 'No changes detected. No update performed.',
       }) // Return the unchanged record
     }
-    // console.log(recordObj, updatedSnippet)
-    console.log(diff(recordObj, updatedSnippet))
+
     const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
       { snippetID: snippetUpdates.snippetID },
       {
