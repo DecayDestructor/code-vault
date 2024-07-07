@@ -9,6 +9,7 @@ import { useUser } from '@clerk/clerk-react'
 import { useEffect } from 'react'
 import { getUser, registerUser } from '../../redux/slices/userManagement'
 import { MoonLoader } from 'react-spinners'
+
 const LandingPage = () => {
   const { user, isSignedIn } = useUser()
   const dispatch = useDispatch()
@@ -41,6 +42,7 @@ const LandingPage = () => {
       </div>
     )
   }
+
   const textVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -51,6 +53,7 @@ const LandingPage = () => {
       },
     },
   }
+
   const mainVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -61,6 +64,7 @@ const LandingPage = () => {
       },
     },
   }
+
   const subHeaderVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -84,8 +88,6 @@ const LandingPage = () => {
       transition: {
         stiffness: 200,
         damping: 10,
-        // staggerChildren: 0.8,
-        // delayChildren: 0.4,
       },
     },
   }
@@ -97,7 +99,7 @@ const LandingPage = () => {
       </motion.h1>
     )
   }
-  //create a similar mini header object with variants
+
   const PopUpMiniHeader = ({ text, variants }) => {
     return (
       <motion.h3 variants={variants} className="miniHeader text-center">
@@ -105,6 +107,7 @@ const LandingPage = () => {
       </motion.h3>
     )
   }
+
   const PopUpList = ({ text, className, number, variants }) => {
     return (
       <motion.div variants={variants} className={className}>
@@ -117,7 +120,7 @@ const LandingPage = () => {
       </motion.div>
     )
   }
-  // const navigate = useNavigate()
+
   return (
     <motion.div
       variants={mainVariants}
@@ -125,7 +128,7 @@ const LandingPage = () => {
       animate="visible"
       className="mt-10 min-w-full"
     >
-      <motion.div variants={mainVariants} className="min-w-full flex flex-col ">
+      <motion.div variants={mainVariants} className="min-w-full flex flex-col">
         <motion.h1
           className="font-lato text-center text-black tracking-widest"
           variants={textVariants}
@@ -140,7 +143,7 @@ const LandingPage = () => {
             </motion.span>
           ))}
           <motion.span
-            className="font-lato md:text-2xl sm:text-xl max-sm:text-lg font-[400] text-black tracking-widest "
+            className="font-lato md:text-2xl sm:text-xl max-sm:text-lg font-[400] text-black tracking-widest"
             variants={letterVariants}
           >
             <br />
@@ -154,63 +157,57 @@ const LandingPage = () => {
           variants={mainVariants}
           className="grid lg:grid-cols-4 md:grid-cols-3 max-sm:grid-cols-1 gap-4 gap-y-10 mt-5"
         >
-          {pointers.map((text, index) => {
-            return (
-              <motion.div key={index} variants={mainVariants}>
-                <PopUpMiniHeader
-                  text={text.header}
-                  variants={subHeaderVariants}
-                />
-                <PopUpList
-                  text={text.description}
-                  variants={letterVariants}
-                  className="descriptionText"
-                />
-              </motion.div>
-            )
-          })}
+          {pointers.map((text, index) => (
+            <motion.div key={index} variants={mainVariants}>
+              <PopUpMiniHeader
+                text={text.header}
+                variants={subHeaderVariants}
+              />
+              <PopUpList
+                text={text.description}
+                variants={letterVariants}
+                className="descriptionText"
+              />
+            </motion.div>
+          ))}
         </motion.div>
       </motion.div>
-      <motion.section className="mt-40 px-20" variants={mainVariants}>
+      <motion.div className="mt-40 px-20" variants={mainVariants}>
         <PopUpHeader text="Features" variants={mainVariants} />
         <motion.div
           variants={mainVariants}
-          className="grid lg:grid-cols-4 md:grid-cols-3 max-sm:grid-cols-1 gap-4  mt-5"
+          className="grid lg:grid-cols-4 md:grid-cols-3 max-sm:grid-cols-1 gap-4 mt-5"
         >
-          {features.map((feature, index) => {
-            return (
-              <PopUpList
-                key={index}
-                text={`${feature}`}
-                number={index + 1}
-                variants={letterVariants}
-                className="flex gap-3 px-3 mt-3 lg:text-xl py-2 font-inter-tight tracking-wide md:text-lg max-sm:text-medium"
-              />
-            )
-          })}
+          {features.map((feature, index) => (
+            <PopUpList
+              key={index}
+              text={`${feature}`}
+              number={index + 1}
+              variants={letterVariants}
+              className="flex gap-3 px-3 mt-3 lg:text-xl py-2 font-inter-tight tracking-wide md:text-lg max-sm:text-medium"
+            />
+          ))}
         </motion.div>
-      </motion.section>
-      <motion.section className="mt-40 px-20 text-center max-md:flex max-md:flex-col max-md:items-center max-md:justify-center">
-        <PopUpHeader text="Get Started" variants={letterVariants} />
+      </motion.div>
+      <motion.div className="mt-40 px-20 text-center max-md:flex max-md:flex-col max-md:items-center max-md:justify-center">
+        <PopUpHeader text="Get Started" variants={mainVariants} />
         <motion.div
           variants={mainVariants}
           className="grid lg:grid-cols-4 md:grid-cols-3 max-sm:grid-cols-1 gap-4 gap-y-10 my-20 text-center"
         >
-          {getStartedFeatures.map((text, index) => {
-            return (
-              <motion.div key={index} variants={letterVariants} className="">
-                <CustomCard
-                  src={<User />}
-                  header={text.title}
-                  link={text.link}
-                  action={text.action}
-                  text={text.description}
-                />
-              </motion.div>
-            )
-          })}
+          {getStartedFeatures.map((text, index) => (
+            <motion.div key={index} variants={letterVariants} className="">
+              <CustomCard
+                src={<User />}
+                header={text.title}
+                link={text.link}
+                action={text.action}
+                text={text.description}
+              />
+            </motion.div>
+          ))}
         </motion.div>
-      </motion.section>
+      </motion.div>
       <section className="bg-black text-gray-400 pt-40 pb-20 px-40 flex flex-col items-center gap-32">
         <p className="my-4 font-inter-tight text-lg">
           Welcome to Code Vault, a passion project born from the desire to
@@ -234,7 +231,6 @@ const LandingPage = () => {
             size={30}
             className="cursor-pointer hover:bg-linkedin p-1 text-white transition-colors duration-250 ease-in-out rounded-md"
           ></Linkedin>
-
           <Github
             href="https://github.com/DecayDestructor"
             fill="white"
