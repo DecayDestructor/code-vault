@@ -1,18 +1,20 @@
-import { delay, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { getStartedFeatures, header } from '../data/LandingPage'
 import { features } from '../data/LandingPage'
 import { pointers } from '../data/LandingPage'
 import CustomCard from '../Components/CustomCard'
-import { redirect, useNavigate } from 'react-router-dom'
 import { Code, Github, Linkedin, User } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useUser } from '@clerk/clerk-react'
 import { useEffect } from 'react'
 import { getUser, registerUser } from '../../redux/slices/userManagement'
+import { MoonLoader } from 'react-spinners'
 const LandingPage = () => {
   const { user, isSignedIn } = useUser()
   const dispatch = useDispatch()
   const userState = useSelector((state) => state.userReducer)
+  console.log(userState)
+  // console.log(userState.user.userId)
   useEffect(() => {
     const checkAndRegisterUser = async () => {
       if (isSignedIn) {
@@ -30,7 +32,15 @@ const LandingPage = () => {
       }
     }
     checkAndRegisterUser()
-  }, [dispatch, isSignedIn, userState.user])
+  }, [dispatch, isSignedIn])
+
+  if (userState.isLoading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center">
+        <MoonLoader color="#000000" loading size={30} />
+      </div>
+    )
+  }
   const textVariants = {
     hidden: { opacity: 0 },
     visible: {

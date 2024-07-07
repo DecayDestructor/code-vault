@@ -52,7 +52,7 @@ const EditSnippet = () => {
 
   const dispatch = useDispatch()
   const { snippetID } = useParams()
-  const snippet = useMemo(() => state.oneSnippet, [state.oneSnippet])
+  const snippet = useMemo(() => state.oneSnippet, [state.oneSnippet.snippetID])
 
   useEffect(() => {
     if (snippetID) {

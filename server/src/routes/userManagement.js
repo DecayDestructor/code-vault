@@ -6,7 +6,7 @@ const router = express.Router()
 //create a get request to get the user with the userId from frontend
 
 router.get('/getUser/:userId', async (req, res) => {
-  console.log('get request to get the user with the userId')
+  // console.log('get request to get the user with the userId')
   const { userId } = req.params
   try {
     const user = await UserModel.findOne({ userId: userId })

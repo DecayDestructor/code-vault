@@ -88,11 +88,49 @@ const userStateSlice = createSlice({
   },
   reducers: {
     setAccess: (state, action) => {
-      console.log(action.payload)
       state.access = action.payload.allowedUsers
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(getUser.fulfilled, (state, action) => {
+      return { ...state, isLoading: false, user: action.payload, error: null }
+    })
+    builder.addCase(getUser.rejected, (state, action) => {
+      return {
+        isLoading: false,
+        error: action.error.message,
+      }
+    })
+
+    builder.addCase(getUser.pending, (state) => {
+      return {
+        ...state,
+        isLoading: true,
+      }
+    })
+
+    builder.addCase(registerUser.fulfilled, (state, action) => {
+      return {
+        ...state,
+        isLoading: false,
+        user: action.payload,
+      }
+    })
+
+    builder.addCase(registerUser.pending, (state) => {
+      return {
+        ...state,
+        isLoading: true,
+      }
+    })
+
+    builder.addCase(registerUser.rejected, (state, action) => {
+      return {
+        isLoading: false,
+        error: action.error.message,
+      }
+    })
+
     builder.addCase(allowAccess.fulfilled, (state, action) => {
       const email = action.payload.user.email
       console.log(email)
