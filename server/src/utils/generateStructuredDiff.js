@@ -1,29 +1,35 @@
-import { diff } from 'jest-diff'
-import stripAnsi from 'strip-ansi'
-
 export function generateStructuredDiff(original, updated) {
-  const differences = diff(original, updated)
-
-  if (!differences) return null
-
-  const lines = stripAnsi(differences).split('\n')
   const structuredDiff = {
-    removed: [],
-    added: [],
+    modified: [],
   }
 
-  for (let i = 2; i < lines.length; i++) {
-    let line = lines[i].trim()
-    if (line.startsWith('-')) {
-      let cleanedLine = line.substring(1).trim()
-      //   cleanedLine = cleanedLine.replace(/\\"/g, '').replace(/^"|"$/g, '') // Remove escaped and surrounding double quotes
-      structuredDiff.removed.push(cleanedLine)
-    } else if (line.startsWith('+')) {
-      let cleanedLine = line.substring(1).trim()
-      //   cleanedLine = cleanedLine.replace(/\\"/g, '').replace(/^"|"$/g, '') // Remove escaped and surrounding double quotes
-      structuredDiff.added.push(cleanedLine)
+  for (const item in original) {
+    if (typeof updated[item] !== 'boolean' && !updated[item]) {
+      continue
+    }
+    if (Array.isArray(updated[item]) && Array.isArray(original[item])) {
+      //compare the two arrays and store it in structuredDiff without using diff
+      if (JSON.stringify(updated[item]) !== JSON.stringify(original[item])) {
+        structuredDiff.modified.push({
+          path: item,
+          previous: original[item],
+          current: updated[item],
+        })
+      }
+    } //check if the key-value pair is object and if they are unequal, push into structuredDiff
+    else if (typeof original[item] === 'object' && updated[item] !== null) {
+      structuredDiff.modified.push({
+        path: item,
+        previous: generateStructuredDiff(original[item], updated[item]),
+        current: generateStructuredDiff(updated[item], original[item]),
+      })
+    } else if (updated[item] !== original[item]) {
+      structuredDiff.modified.push({
+        path: item,
+        previous: original[item],
+        current: updated[item],
+      })
     }
   }
-
   return structuredDiff
 }

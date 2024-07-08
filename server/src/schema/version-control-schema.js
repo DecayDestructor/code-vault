@@ -1,5 +1,10 @@
 import mongoose from 'mongoose'
 const versonControlSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   userId: {
     type: String,
     require: true,

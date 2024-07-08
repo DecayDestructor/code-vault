@@ -101,6 +101,7 @@ router.post('/remove-access', async (req, res) => {
     if (!record) {
       return res.status(404).send({ message: 'Snippet not found.' })
     }
+
     if (record.publicSnippet) {
       return res
         .status(400)
