@@ -22,6 +22,11 @@ const versonControlSchema = new mongoose.Schema({
     default: 1,
     required: true,
   },
+  editMessage: {
+    type: String,
+    default: '',
+    required: false,
+  },
 })
 
 const VersionControlModel = mongoose.model(

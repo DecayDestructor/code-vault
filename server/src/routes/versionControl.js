@@ -5,7 +5,14 @@ import { generateStructuredDiff } from '../utils/generateStructuredDiff.js'
 const router = express.Router()
 
 router.put('/edit', async (req, res) => {
-  const snippetUpdates = req.body
+  const { snippetUpdates, editMessage } = req.body
+  for (const item in snippetUpdates) {
+    if (!snippetUpdates[item] && typeof snippetUpdates[item] !== 'boolean') {
+      return res
+        .status(400)
+        .send({ message: `Empty ${item}. Please enter a valid value ` })
+    }
+  }
 
   console.log('update snippet')
 
@@ -64,6 +71,7 @@ router.put('/edit', async (req, res) => {
       version: record.version,
       userId: snippetUpdates.userId,
       diff: { ...versionControlSnippet },
+      editMessage: editMessage,
     })
     await newSnippet.save()
     return res.status(200).send(updatedSnippetDoc)
