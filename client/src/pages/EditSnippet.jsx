@@ -49,10 +49,17 @@ const EditSnippet = () => {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [publicSnippet, setPublicSnippet] = useState(true)
-
+  const [editMessage, setEditMessage] = useState('')
+  const [editName, setEditName] = useState('')
   const dispatch = useDispatch()
   const { snippetID } = useParams()
-  const snippet = useMemo(() => state.oneSnippet, [state.oneSnippet.snippetID])
+  const snippet = state.oneSnippet
+  let idFetch = false
+  if (snippet) {
+    if (snippet.snippetID) {
+      idFetch = true
+    }
+  }
 
   useEffect(() => {
     if (snippetID) {
@@ -68,12 +75,11 @@ const EditSnippet = () => {
       setPublicSnippet(snippet.publicSnippet)
       setSelectedLanguage(snippet.language)
     }
-  }, [snippet])
+  }, [idFetch])
 
   const handleSubmit = (e) => {
     e.preventDefault()
     const newSnippet = {
-      _id: snippet._id,
       snippetID,
       userId: user.user.id,
       name,
@@ -82,8 +88,13 @@ const EditSnippet = () => {
       code: value,
       language: selectedLanguage.toLowerCase(),
     }
+    const obj = {
+      snippetUpdates: newSnippet,
+      editMessage,
+      editName,
+    }
     // console.log(newSnippet)
-    dispatch(editSnippet(newSnippet))
+    dispatch(editSnippet(obj))
   }
 
   return (
@@ -91,11 +102,7 @@ const EditSnippet = () => {
       <div className="lg:flex w-[90%] max-lg:flex max-lg:flex-col max-lg:items-center max-lg:my-5">
         <div className="mt-5 flex flex-col gap-3 justify-center items-center h-full w-[55%] max-lg:w-5/6 max-lg:ml-5 max-lg:my-10">
           <div className="w-full">
-            <h1 className="subHeader">Create a new snippet</h1>
-            <p className="font-lato text-sm text-default-500 italic mt-1 p-1">
-              A code snippet is a piece of code that you can use as and when
-              required.
-            </p>
+            <h1 className="subHeader">Edit '{name}'</h1>
           </div>
           <div className="w-full">
             <div className="inline-flex gap-3 items-center p-3 bg-gray-50 rounded-md">
@@ -122,6 +129,19 @@ const EditSnippet = () => {
               />
             </div>
             <div className="flex flex-col gap-2 w-4/5">
+              <label className="font-lato text-sm text-default-500 w-full">
+                Edit Name
+              </label>
+              <input
+                type="text"
+                className="border-2 border-gray-200 rounded-md p-2"
+                value={editName}
+                onChange={(e) => {
+                  setEditName(e.target.value)
+                }}
+              />
+            </div>
+            <div className="flex flex-col gap-2 w-4/5">
               <label className="font-lato text-sm text-default-500">
                 Snippet Description
               </label>
@@ -130,6 +150,18 @@ const EditSnippet = () => {
                 value={description}
                 onChange={(e) => {
                   setDescription(e.target.value)
+                }}
+              />
+            </div>
+            <div className="flex flex-col gap-2 w-4/5">
+              <label className="font-lato text-sm text-default-500">
+                Edit Message
+              </label>
+              <textarea
+                className="border-2 border-gray-200 rounded-md p-2 w-full"
+                value={editMessage}
+                onChange={(e) => {
+                  setEditMessage(e.target.value)
                 }}
               />
             </div>

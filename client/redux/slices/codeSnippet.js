@@ -167,12 +167,16 @@ const snippetSlice = createSlice({
       state.loading = true
     })
     builder.addCase(editSnippet.fulfilled, (state, action) => {
+      console.log(state.snippets)
       return {
         ...state,
         loading: false,
-        snippets: state.snippets.map((snippet) =>
-          snippet._id === action.payload._id ? action.payload : snippet
-        ),
+        snippets: state.snippets.map((snippet) => {
+          console.log(snippet)
+          return snippet.snippetID === action.payload.snippetID
+            ? action.payload
+            : snippet
+        }),
         oneSnippet: action.payload,
       }
     })

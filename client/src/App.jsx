@@ -32,6 +32,10 @@ const Snippet = lazy(() => {
 const EditSnippet = lazy(() => {
   return import('./pages/EditSnippet')
 })
+
+const VersionControl = lazy(() => {
+  return import('./pages/VersionControl')
+})
 const App = () => {
   return (
     <div className="bg-white h-screen w-screen">
@@ -61,6 +65,10 @@ const App = () => {
               <Route
                 path="/edit-snippet/:snippetID"
                 element={<WithAuth Component={EditSnippet} />}
+              />
+              <Route
+                path="/snippet/:snippetID/history"
+                element={<WithAuth Component={VersionControl} />}
               />
             </Route>
             <Route

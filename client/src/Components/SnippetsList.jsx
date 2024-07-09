@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { deleteSnippet } from '../../redux/slices/codeSnippet'
 import DeleteModal from './DeleteModal'
 import { Link, useNavigate } from 'react-router-dom'
-import { Edit } from 'lucide-react'
+import { Edit, HistoryIcon } from 'lucide-react'
 const SnippetsList = ({ snippets }) => {
   const [localSnippets, setLocalSnippets] = useState(snippets)
 
@@ -82,6 +82,13 @@ const SnippetCard = ({
           }}
         >
           <Edit size={18} />
+        </button>
+        <button
+          onClick={() => {
+            navigate(`/snippet/${snippetID}/history`)
+          }}
+        >
+          <HistoryIcon size={18} />
         </button>
       </div>
     </div>
