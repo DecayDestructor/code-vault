@@ -103,6 +103,25 @@ export const editSnippet = createAsyncThunk('editSnippet', async (snippet) => {
     })
   }
 })
+
+export const getHistory = createAsyncThunk('getHistory', async (obj) => {
+  const { snippetID, userId } = obj
+  console.log(obj)
+  try {
+    const response = await axios.get(
+      'http://localhost:5000/edit-snippets/' + snippetID + '/' + userId
+    )
+    return response.data
+  } catch (error) {
+    console.error(error)
+    const errorMessage =
+      error.response?.data?.message || error.message || 'Something went wrong'
+    toast.error(`${errorMessage}`, {
+      duration: 5000,
+    })
+  }
+})
+
 const snippetSlice = createSlice({
   name: 'fetchSnippet',
   initialState: {
@@ -110,6 +129,7 @@ const snippetSlice = createSlice({
     oneSnippet: null,
     loading: false,
     error: null,
+    edits: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -172,7 +192,6 @@ const snippetSlice = createSlice({
         ...state,
         loading: false,
         snippets: state.snippets.map((snippet) => {
-          console.log(snippet)
           return snippet.snippetID === action.payload.snippetID
             ? action.payload
             : snippet
@@ -183,6 +202,26 @@ const snippetSlice = createSlice({
     builder.addCase(editSnippet.rejected, (state, action) => {
       state.loading = false
       state.error = action.error.message
+    })
+    builder.addCase(getHistory.pending, (state) => {
+      return {
+        ...state,
+        loading: true,
+      }
+    })
+    builder.addCase(getHistory.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        edits: action.payload,
+      }
+    })
+    builder.addCase(getHistory.rejected, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        error: action.error.message,
+      }
     })
   },
 })

@@ -4,6 +4,7 @@ import { deleteSnippet } from '../../redux/slices/codeSnippet'
 import DeleteModal from './DeleteModal'
 import { Link, useNavigate } from 'react-router-dom'
 import { Edit, HistoryIcon } from 'lucide-react'
+import { Tooltip } from '@nextui-org/react'
 const SnippetsList = ({ snippets }) => {
   const [localSnippets, setLocalSnippets] = useState(snippets)
 
@@ -76,20 +77,24 @@ const SnippetCard = ({
       </button> */}
       <div className="flex gap-5 justify-between items-center">
         <DeleteModal handleDelete={handleDeleteClick} />
-        <button
-          onClick={() => {
-            navigate(`/edit-snippet/${snippetID}`)
-          }}
-        >
-          <Edit size={18} />
-        </button>
-        <button
-          onClick={() => {
-            navigate(`/snippet/${snippetID}/history`)
-          }}
-        >
-          <HistoryIcon size={18} />
-        </button>
+        <Tooltip content="Edit Snippet">
+          <button
+            onClick={() => {
+              navigate(`/edit-snippet/${snippetID}`)
+            }}
+          >
+            <Edit size={18} />
+          </button>
+        </Tooltip>
+        <Tooltip content="View History">
+          <button
+            onClick={() => {
+              navigate(`/snippet/${snippetID}/history`)
+            }}
+          >
+            <HistoryIcon size={18} />
+          </button>
+        </Tooltip>
       </div>
     </div>
   )

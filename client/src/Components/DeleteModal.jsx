@@ -7,6 +7,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Tooltip,
 } from '@nextui-org/react'
 import { TrashIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -24,9 +25,11 @@ export default function DeleteModal({ handleDelete }) {
 
   return (
     <>
-      <button onClick={onOpen} className="">
-        <TrashIcon color="red" size={18} />
-      </button>
+      <Tooltip content="Delete Snippet">
+        <button onClick={onOpen} className="">
+          <TrashIcon color="red" size={18} />
+        </button>
+      </Tooltip>
       <Modal
         backdrop="blur"
         isOpen={isOpen}
