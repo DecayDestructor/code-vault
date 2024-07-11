@@ -81,15 +81,9 @@ const VersionControl = () => {
             </h1>
           </div>
         ) : (
-          <div>
+          <div className="flex flex-col gap-4">
             {snippet.edits.map((item, index) => {
-              return (
-                <VersionControlCard
-                  key={index}
-                  editMsg={item.editMessage}
-                  name={item.editName}
-                />
-              )
+              return <VersionControlCard key={index} {...item} />
             })}
           </div>
         )}
