@@ -4,6 +4,30 @@ import codeSnippet from '../schema/snippet-schema.js'
 import { generateStructuredDiff } from '../utils/generateStructuredDiff.js'
 const router = express.Router()
 
+router.get('/:snippetID/:userId', async (req, res) => {
+  const { snippetID, userId } = req.params
+
+  //look for and return all the edits found in the versionControlModel with the snippetID
+  try {
+    //validate the userId with the userId in the versionControlModel and return a message if they are not equal
+    const record = await VersionControl.findOne({
+      snippetID: snippetID,
+    })
+    if (!record) {
+      return res.status(404).send({ message: 'No edits found.' })
+    }
+    if (record.userId !== userId) {
+      return res
+        .status(403)
+        .send({ message: 'User not authorized to view this snippet.' })
+    }
+    const edits = await VersionControl.find({ snippetID: snippetID })
+    res.status(200).send(edits)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
+
 router.put('/edit', async (req, res) => {
   const { snippetUpdates, editMessage, editName } = req.body
   for (const item in snippetUpdates) {
@@ -77,7 +101,8 @@ router.put('/edit', async (req, res) => {
       userId: snippetUpdates.userId,
       diff: { ...versionControlSnippet },
       editMessage: editMessage,
-      name: editName,
+      editName,
+      name: snippetUpdates.name,
     })
     await newSnippet.save()
     return res.status(200).send(updatedSnippetDoc)

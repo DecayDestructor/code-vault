@@ -32,6 +32,11 @@ const versonControlSchema = new mongoose.Schema({
     default: '',
     required: false,
   },
+  editName: {
+    type: String,
+    default: '',
+    required: false,
+  },
 })
 
 const VersionControlModel = mongoose.model(
