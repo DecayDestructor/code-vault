@@ -88,6 +88,33 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
-
+router.put('/restore', async (req, res) => {
+  const snippet = req.body
+  console.log(snippet)
+  try {
+    const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
+      { snippetID: snippet.snippetID },
+      {
+        name: snippet.name,
+        publicSnippet: snippet.publicSnippet,
+        description: snippet.description,
+        code: snippet.code,
+        language: snippet.language,
+        version: snippet.version + 1,
+      },
+      { new: true }
+    )
+    if (!updatedSnippetDoc) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+    return res.status(200).send({
+      message: 'Snippet updated successfully',
+      snippet: updatedSnippetDoc,
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).send({ message: 'Error occured, please try again' })
+  }
+})
 
 export default router

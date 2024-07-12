@@ -3,7 +3,8 @@ import { useUser } from '@clerk/clerk-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getHistory, getOneSnippet } from '../../redux/slices/codeSnippet.js'
+import { getOneSnippet } from '../../redux/slices/codeSnippet.js'
+import { getHistory } from '../../redux/slices/versionControl.js'
 import Loading from '../Components/Loading.jsx'
 import VersionControlCard from '../Components/VersionControlCard.jsx'
 
@@ -12,7 +13,7 @@ const VersionControl = () => {
   const navigate = useNavigate()
   const { snippetID } = useParams()
   const dispatch = useDispatch()
-  const snippet = useSelector((state) => state.snippetReducer)
+  const snippet = useSelector((state) => state)
   console.log(snippet)
 
   useEffect(() => {
@@ -20,12 +21,20 @@ const VersionControl = () => {
   }, [dispatch, snippetID])
 
   useEffect(() => {
-    if (snippet.oneSnippet?.userId) {
-      dispatch(getHistory({ snippetID, userId: snippet.oneSnippet.userId }))
+    if (snippet.snippetReducer.oneSnippet?.userId) {
+      dispatch(
+        getHistory({
+          snippetID,
+          userId: snippet.snippetReducer.oneSnippet.userId,
+        })
+      )
     }
-  }, [dispatch, snippetID, snippet.oneSnippet?.userId])
+  }, [dispatch, snippetID, snippet.snippetReducer?.oneSnippet?.userId])
 
-  if (snippet.loading || !snippet.oneSnippet) {
+  if (
+    snippet.versionControlReducer.loading ||
+    !snippet.snippetReducer.oneSnippet
+  ) {
     return <Loading />
   }
 
@@ -37,7 +46,8 @@ const VersionControl = () => {
             Welcome, {user.firstName}
           </h3>
           <span className="font-inter-tight">
-            Please find the previous version of '{snippet.oneSnippet.name}' here
+            Please find the previous version of '
+            {snippet.snippetReducer.oneSnippet.name}' here
           </span>
         </div>
         <div className="flex flex-col gap-2 max-lg:grow">
@@ -72,17 +82,19 @@ const VersionControl = () => {
       <div className="max-lg:mt-3 lg:h-full grow flex flex-col gap-5 px-4 py-3">
         <div className="w-full lg:hidden flex flex-col px-5">
           <h3 className="font-lato text-[30px]">Welcome</h3>
-          Please find the previous version of '{snippet.oneSnippet.name}' here
+          Please find the previous version of '
+          {snippet.snippetReducer.oneSnippet.name}' here
         </div>
-        {!snippet.oneSnippet || snippet.oneSnippet.length == 0 ? (
+        {!snippet.versionControlReducer.edits ||
+        snippet.versionControlReducer.edits.length == 0 ? (
           <div className="flex flex-col items-center justify-center h-full">
             <h1 className="font-lato text-center text-black tracking-widest">
-              No Snippets Found
+              No Edits Found
             </h1>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {snippet.edits.map((item, index) => {
+            {snippet.versionControlReducer.edits.map((item, index) => {
               return <VersionControlCard key={index} {...item} />
             })}
           </div>

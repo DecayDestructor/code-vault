@@ -103,24 +103,29 @@ export const editSnippet = createAsyncThunk('editSnippet', async (snippet) => {
     })
   }
 })
-
-export const getHistory = createAsyncThunk('getHistory', async (obj) => {
-  const { snippetID, userId } = obj
-  console.log(obj)
-  try {
-    const response = await axios.get(
-      'http://localhost:5000/edit-snippets/' + snippetID + '/' + userId
-    )
-    return response.data
-  } catch (error) {
-    console.error(error)
-    const errorMessage =
-      error.response?.data?.message || error.message || 'Something went wrong'
-    toast.error(`${errorMessage}`, {
-      duration: 5000,
-    })
+export const restoreVersion = createAsyncThunk(
+  'restoreVersion',
+  async (snippet) => {
+    console.log(snippet)
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/code-snippets/restore`,
+        snippet
+      )
+      toast.success('Version restored successfully', {
+        duration: 5000,
+      })
+      return response.data
+    } catch (error) {
+      console.error(error)
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Something went wrong'
+      toast.error(`${errorMessage}`, {
+        duration: 5000,
+      })
+    }
   }
-})
+)
 
 const snippetSlice = createSlice({
   name: 'fetchSnippet',
@@ -200,25 +205,31 @@ const snippetSlice = createSlice({
       }
     })
     builder.addCase(editSnippet.rejected, (state, action) => {
-      state.loading = false
-      state.error = action.error.message
+      return {
+        ...state,
+        loading: false,
+        error: action.error.message,
+      }
     })
-    builder.addCase(getHistory.pending, (state) => {
+    builder.addCase(restoreVersion.pending, (state) => {
       return {
         ...state,
         loading: true,
       }
     })
-    builder.addCase(getHistory.fulfilled, (state, action) => {
+    builder.addCase(restoreVersion.fulfilled, (state, action) => {
       return {
-        ...state,
         loading: false,
-        edits: action.payload,
+        snippets: state.snippets.map((snippet) =>
+          snippet.snippetID === action.payload.snippetID
+            ? action.payload
+            : snippet
+        ),
+        oneSnippet: action.payload,
       }
     })
-    builder.addCase(getHistory.rejected, (state, action) => {
+    builder.addCase(restoreVersion.rejected, (state, action) => {
       return {
-        ...state,
         loading: false,
         error: action.error.message,
       }

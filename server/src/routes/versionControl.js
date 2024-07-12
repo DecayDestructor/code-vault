@@ -2,6 +2,7 @@ import express from 'express'
 import VersionControl from '../schema/version-control-schema.js'
 import codeSnippet from '../schema/snippet-schema.js'
 import { generateStructuredDiff } from '../utils/generateStructuredDiff.js'
+import { v4 as uuidv4 } from 'uuid'
 const router = express.Router()
 
 router.get('/:snippetID/:userId', async (req, res) => {
@@ -29,6 +30,7 @@ router.get('/:snippetID/:userId', async (req, res) => {
 })
 
 router.put('/edit', async (req, res) => {
+  const editID = uuidv4()
   const { snippetUpdates, editMessage, editName } = req.body
   for (const item in snippetUpdates) {
     if (!snippetUpdates[item] && typeof snippetUpdates[item] !== 'boolean') {
@@ -103,12 +105,41 @@ router.put('/edit', async (req, res) => {
       editMessage: editMessage,
       editName,
       name: snippetUpdates.name,
+      editID,
     })
     await newSnippet.save()
     return res.status(200).send(updatedSnippetDoc)
   } catch (error) {
     console.log(error)
     return res.status(500).send(error)
+  }
+})
+
+router.get('/:editID', async (req, res) => {
+  const editID = req.params.editID
+  try {
+    const record = await VersionControl.findOne({ editID })
+    if (!record) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+    return res.status(200).send(record)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
+
+router.delete('/:id', async (req, res) => {
+  const editID = req.params.id
+  try {
+    const record = await VersionControl.findOneAndDelete({ editID })
+    if (!record) {
+      return res.status(404).send({ message: 'Snippet not found.' })
+    }
+    return res
+      .status(200)
+      .send({ message: 'Snippet deleted successfully', snippet: record })
+  } catch (error) {
+    res.status(500).send(error)
   }
 })
 

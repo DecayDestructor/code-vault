@@ -18,14 +18,14 @@ export default function DeleteModal({ handleDelete }) {
   const handleDeleteAndClose = () => {
     handleDelete()
     onClose()
-    toast.success('Snippet Deleted Successfully', {
+    toast.success('Deleted Successfully', {
       duration: 5000,
     })
   }
 
   return (
     <>
-      <Tooltip content="Delete Snippet">
+      <Tooltip content="Delete">
         <button onClick={onOpen} className="">
           <TrashIcon color="red" size={18} />
         </button>
