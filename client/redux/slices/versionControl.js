@@ -53,6 +53,22 @@ export const deleteEdit = createAsyncThunk('deleteEdit', async (editID) => {
   }
 })
 
+export const deleteALl = createAsyncThunk('deleteALl', async (snippetID) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:5000/edit-snippets/${snippetID}/all`
+    )
+    return response.data
+  } catch (err) {
+    console.error(err)
+    const errorMessage =
+      err.response?.data?.message || err.message || 'Something went wrong'
+    toast.error(`${errorMessage}`, {
+      duration: 5000,
+    })
+  }
+})
+
 const versionControl = createSlice({
   name: 'versionControl',
   initialState: {
@@ -119,6 +135,27 @@ const versionControl = createSlice({
       }
     })
     builder.addCase(getEdit.rejected, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        error: action.error.message,
+      }
+    })
+    builder.addCase(deleteALl.pending, (state) => {
+      return {
+        ...state,
+        loading: true,
+      }
+    })
+    builder.addCase(deleteALl.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        edits: [],
+        oneEdit: null,
+      }
+    })
+    builder.addCase(deleteALl.rejected, (state, action) => {
       return {
         ...state,
         loading: false,

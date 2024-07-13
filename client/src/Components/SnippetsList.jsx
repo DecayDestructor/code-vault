@@ -5,6 +5,7 @@ import DeleteModal from './DeleteModal'
 import { Link, useNavigate } from 'react-router-dom'
 import { Edit, HistoryIcon } from 'lucide-react'
 import { Tooltip } from '@nextui-org/react'
+import { deleteALl } from '../../redux/slices/versionControl'
 const SnippetsList = ({ snippets }) => {
   const [localSnippets, setLocalSnippets] = useState(snippets)
 
@@ -50,6 +51,7 @@ const SnippetCard = ({
   const handleDeleteClick = () => {
     onDelete(snippetID)
     dispatch(deleteSnippet(snippetID))
+    dispatch(deleteALl(snippetID))
   }
 
   return (

@@ -76,17 +76,17 @@ const Snippet = () => {
     )
   }
   const editDate = new Date(editReducer.oneEdit.date).toDateString()
-  const newSnippet = {
+  const restoreSnippet = {
     ...snippet.oneSnippet,
-    ...editReducer.oneEdit.diff.modified,
+    ...editReducer.oneEdit.diff.previous,
   }
-  console.log(newSnippet)
+  console.log(restoreSnippet)
   return (
     <div className=" flex flex-col m-auto mt-16 font-inter-tight w-[80%] h-[80%] gap-10">
       <div className="flex justify-between max-lg:flex-col gap-4">
         <div className=" flex flex-col gap-3 max-lg:items-center">
           <h1 className=" font-bold tracking-wid max-md:text-lg text-2xl p-0 flex">
-            {editReducer.oneEdit.diff.modified.name || snippet.oneSnippet.name}
+            {editReducer.oneEdit.diff.previous.name || snippet.oneSnippet.name}
           </h1>
           <div className="flex items-center">
             <div className="flex gap-3 items-center p-3 px-6 bg-gray-50 rounded-md">
@@ -99,13 +99,13 @@ const Snippet = () => {
             </div>
           </div>
           <p className="text-gray-600 max-md:text-sm">
-            {editReducer.oneEdit.diff.modified.description ||
+            {editReducer.oneEdit.diff.previous.description ||
               snippet.oneSnippet.description}
           </p>
         </div>
         <div className="flex flex-col gap-4 max-lg:items-center ">
           {/*public or private snippet*/}
-          {editReducer.oneEdit.diff.modified.publicSnippet ? (
+          {editReducer.oneEdit.diff.previous.publicSnippet ? (
             <div className="max-md:text-sm flex gap-5 items-center">
               <p>Public</p>
             </div>
@@ -127,11 +127,11 @@ const Snippet = () => {
       <div className="w-full h-full self-center flex items-center justify-center">
         <AceEditor
           mode={
-            editReducer.oneEdit.diff.modified.language ||
+            editReducer.oneEdit.diff.previous.language ||
             snippet.oneSnippet.language
           }
           value={
-            editReducer.oneEdit.diff.modified.code || snippet.oneSnippet.code
+            editReducer.oneEdit.diff.previous.code || snippet.oneSnippet.code
           }
           theme="github"
           width="80%"
@@ -140,7 +140,7 @@ const Snippet = () => {
         />
       </div>
       <div>
-        <RestoreVersionModal snippet={newSnippet} />
+        <RestoreVersionModal snippet={restoreSnippet} />
       </div>
     </div>
   )

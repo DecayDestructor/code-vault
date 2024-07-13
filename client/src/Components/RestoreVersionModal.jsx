@@ -15,6 +15,7 @@ import { ListRestart } from 'lucide-react'
 export default function RestoreVersionModal({ snippet }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
   const dispatch = useDispatch()
+  console.log(snippet)
   const handleSubmit = () => {
     onClose()
     dispatch(restoreVersion(snippet))
