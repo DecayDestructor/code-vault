@@ -7,6 +7,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Input,
 } from '@nextui-org/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getOneSnippet } from '../../redux/slices/codeSnippet'

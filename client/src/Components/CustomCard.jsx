@@ -5,9 +5,9 @@ import {
   CardBody,
   CardFooter,
   Divider,
-  Link,
   Image,
 } from '@nextui-org/react'
+import { Link } from 'react-router-dom'
 import { Link as Route } from 'react-router-dom'
 export default function CustomCard({ src, text, link, header, action }) {
   return (
@@ -25,9 +25,7 @@ export default function CustomCard({ src, text, link, header, action }) {
       </CardBody>
       <Divider />
       <CardFooter className="text-center w-full justify-center">
-        <Link showAnchorIcon href={link}>
-          {action}
-        </Link>
+        <Link to={link}>{action}</Link>
       </CardFooter>
     </Card>
   )

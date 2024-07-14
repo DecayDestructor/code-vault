@@ -126,6 +126,24 @@ export const restoreVersion = createAsyncThunk(
     }
   }
 )
+export const getCategories = createAsyncThunk(
+  'getCategories',
+  async (userId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/code-snippets/getCategoriesByUserID/${userId}`
+      )
+      return response.data
+    } catch (error) {
+      console.error(error)
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Something went wrong'
+      toast.error(`${errorMessage}`, {
+        duration: 5000,
+      })
+    }
+  }
+)
 
 const snippetSlice = createSlice({
   name: 'fetchSnippet',
@@ -135,8 +153,17 @@ const snippetSlice = createSlice({
     loading: false,
     error: null,
     edits: [],
+    categories: [],
   },
-  reducers: {},
+  reducers: {
+    addCategory: (state, action) => {
+      //check if state already contains the action.payload
+      // if not, add it to the state.categories array
+      if (!state.categories.includes(action.payload)) {
+        state.categories.push(action.payload)
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(addSnippet.pending, (state) => {
       state.loading = true
@@ -234,7 +261,26 @@ const snippetSlice = createSlice({
         error: action.error.message,
       }
     })
+    builder.addCase(getCategories.pending, (state) => {
+      return {
+        ...state,
+        loading: true,
+      }
+    })
+    builder.addCase(getCategories.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        categories: action.payload,
+      }
+    })
+    builder.addCase(getCategories.rejected, (state, action) => {
+      return {
+        loading: false,
+        error: action.error.message,
+      }
+    })
   },
 })
-
+export const { addCategory } = snippetSlice.actions
 export default snippetSlice.reducer

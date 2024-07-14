@@ -117,4 +117,24 @@ router.put('/restore', async (req, res) => {
   }
 })
 
+router.get('/getCategoriesByUserID/:userId', async (req, res) => {
+  console.log('categories')
+  const { userId } = req.params
+  try {
+    const categories = await codeSnippet
+      .find({
+        userId,
+      })
+      .distinct('categories')
+      .sort({
+        name: 1,
+      })
+    console.log(categories)
+    return res.status(200).send(categories)
+  } catch (err) {
+    console.error(err)
+    res.status(500).send({ message: 'Error occured, please try again' })
+  }
+})
+
 export default router

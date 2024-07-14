@@ -88,6 +88,11 @@ const Snippet = () => {
           <h1 className=" font-bold tracking-wid max-md:text-lg text-2xl p-0 flex">
             {editReducer.oneEdit.diff.previous.name || snippet.oneSnippet.name}
           </h1>
+          <div className="max-md:text-sm flex gap-5 items-center">
+            {editReducer.oneEdit.diff.previous.categories.map((item, index) => {
+              return <p key={index}>{item}</p>
+            })}
+          </div>
           <div className="flex items-center">
             <div className="flex gap-3 items-center p-3 px-6 bg-gray-50 rounded-md">
               <img

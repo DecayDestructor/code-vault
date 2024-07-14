@@ -1,12 +1,14 @@
 import { useUser } from '@clerk/clerk-react'
 import { Button, snippet } from '@nextui-org/react'
-import { Eye, EyeOffIcon } from 'lucide-react'
+import { Eye, EyeOffIcon, Check, ArrowLeft } from 'lucide-react'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   addSnippet,
   editSnippet,
   getOneSnippet,
+  addCategory,
+  getCategories,
 } from '../../redux/slices/codeSnippet'
 import {
   Dropdown,
@@ -14,7 +16,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from '@nextui-org/react'
-
+import SelectCategory from '../Components/SelectCategory'
 import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-java'
@@ -51,6 +53,9 @@ const EditSnippet = () => {
   const [publicSnippet, setPublicSnippet] = useState(true)
   const [editMessage, setEditMessage] = useState('')
   const [editName, setEditName] = useState('')
+  const [category, setCategory] = useState([])
+  const [categoryInput, setCategoryInput] = useState(false)
+  const [selectedCategories, setSelectedCategories] = useState([])
   const dispatch = useDispatch()
   const { snippetID } = useParams()
   const snippet = state.oneSnippet
@@ -74,8 +79,12 @@ const EditSnippet = () => {
       setDescription(snippet.description)
       setPublicSnippet(snippet.publicSnippet)
       setSelectedLanguage(snippet.language)
+      setSelectedCategories(snippet.categories)
     }
   }, [idFetch])
+  useEffect(() => {
+    dispatch(getCategories(user.user.id))
+  }, [dispatch, user.user.id])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -87,6 +96,7 @@ const EditSnippet = () => {
       publicSnippet,
       code: value,
       language: selectedLanguage.toLowerCase(),
+      categories: selectedCategories,
     }
     const obj = {
       snippetUpdates: newSnippet,
@@ -95,6 +105,12 @@ const EditSnippet = () => {
     }
     // console.log(newSnippet)
     dispatch(editSnippet(obj))
+  }
+  const handleAddCategory = (e) => {
+    e.preventDefault()
+    dispatch(addCategory(category))
+    setCategory('')
+    setCategoryInput(false)
   }
 
   return (
@@ -164,6 +180,38 @@ const EditSnippet = () => {
                   setEditMessage(e.target.value)
                 }}
               />
+            </div>
+            <h1 className="subHeader">Category</h1>
+            <div className="flex flex-col gap-5 w-3/6">
+              {!categoryInput ? (
+                <SelectCategory
+                  setCategoryInput={setCategoryInput}
+                  setSelectedCategories={setSelectedCategories}
+                  selectedCategories={selectedCategories}
+                />
+              ) : (
+                <div className="flex gap-5 items-center">
+                  <input
+                    type="text"
+                    className="border-2 border-gray-200 rounded-md p-2"
+                    value={category}
+                    onChange={(e) => {
+                      setCategory(e.target.value)
+                    }}
+                  />
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setCategoryInput(false)
+                    }}
+                  >
+                    <ArrowLeft />
+                  </button>
+                  <button onClick={handleAddCategory}>
+                    <Check />
+                  </button>
+                </div>
+              )}
             </div>
             <h1 className="subHeader">Visibility</h1>
             <div className="flex flex-col gap-5 w-3/6">

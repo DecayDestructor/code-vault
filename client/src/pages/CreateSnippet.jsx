@@ -1,9 +1,13 @@
 import { useUser } from '@clerk/clerk-react'
 import { Button, snippet } from '@nextui-org/react'
-import { Eye, EyeOffIcon } from 'lucide-react'
-import React, { useState } from 'react'
+import { ArrowLeft, Check, Eye, EyeOffIcon, Plus } from 'lucide-react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addSnippet } from '../../redux/slices/codeSnippet'
+import {
+  addCategory,
+  addSnippet,
+  getCategories,
+} from '../../redux/slices/codeSnippet'
 import {
   Dropdown,
   DropdownTrigger,
@@ -21,6 +25,7 @@ import 'ace-builds/src-noconflict/theme-github'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import { languages } from '../data/CreateSnippet'
 import 'ace-builds/src-min-noconflict/ext-language_tools'
+import SelectCategory from '../Components/SelectCategory'
 
 const CodeEditorComponent = ({ mode, className, value, onChange }) => {
   return (
@@ -38,16 +43,19 @@ const CodeEditorComponent = ({ mode, className, value, onChange }) => {
 }
 
 const CreateSnippet = () => {
-  const state = useSelector((state) => state.snippetReducer)
-  console.log(state)
+  // const state = useSelector((state) => state.snippetReducer)
+  // console.log(state)
   const user = useUser()
   const [selectedLanguage, setSelectedLanguage] = useState('JavaScript')
   const [value, setValue] = useState('')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [publicSnippet, setPublicSnippet] = useState(true)
-
+  const [category, setCategory] = useState([])
+  const [categoryInput, setCategoryInput] = useState(false)
+  const [selectedCategories, setSelectedCategories] = useState([])
   const dispatch = useDispatch()
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const newSnippet = {
@@ -57,9 +65,21 @@ const CreateSnippet = () => {
       publicSnippet: publicSnippet,
       code: value,
       language: selectedLanguage.toLowerCase(),
+      categories: selectedCategories,
     }
     dispatch(addSnippet(newSnippet))
   }
+
+  const handleAddCategory = (e) => {
+    e.preventDefault()
+    dispatch(addCategory(category))
+    setCategory('')
+    setCategoryInput(false)
+  }
+  useEffect(() => {
+    dispatch(getCategories(user.user.id))
+  }, [dispatch, user.user.id])
+  // console.log(selectedCategories)
   // console.log(snippets)
   return (
     <form className="flex flex-col items-center gap-6" onSubmit={handleSubmit}>
@@ -107,6 +127,38 @@ const CreateSnippet = () => {
                   setDescription(e.target.value)
                 }}
               />
+            </div>
+            <h1 className="subHeader">Category</h1>
+            <div className="flex flex-col gap-5 w-3/6">
+              {!categoryInput ? (
+                <SelectCategory
+                  setCategoryInput={setCategoryInput}
+                  setSelectedCategories={setSelectedCategories}
+                  selectedCategories={selectedCategories}
+                />
+              ) : (
+                <div className="flex gap-5 items-center">
+                  <input
+                    type="text"
+                    className="border-2 border-gray-200 rounded-md p-2"
+                    value={category}
+                    onChange={(e) => {
+                      setCategory(e.target.value)
+                    }}
+                  />
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setCategoryInput(false)
+                    }}
+                  >
+                    <ArrowLeft />
+                  </button>
+                  <button onClick={handleAddCategory}>
+                    <Check />
+                  </button>
+                </div>
+              )}
             </div>
             <h1 className="subHeader">Visibility</h1>
             <div className="flex flex-col gap-5 w-3/6">
@@ -157,6 +209,7 @@ const CreateSnippet = () => {
                 <DropdownMenu
                   variant="faded"
                   aria-label="Dropdown menu with icons"
+                  selectionMode="single"
                 >
                   {languages.map((language) => {
                     return (

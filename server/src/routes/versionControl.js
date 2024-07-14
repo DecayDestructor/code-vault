@@ -88,6 +88,7 @@ router.put('/edit', async (req, res) => {
         code: snippetUpdates.code,
         language: snippetUpdates.language,
         version: record.version + 1,
+        categories: snippetUpdates.categories,
       },
       { new: true }
     )
