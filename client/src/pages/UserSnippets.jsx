@@ -1,8 +1,8 @@
 import { useUser } from '@clerk/clerk-react'
 import { Button } from '@nextui-org/react'
-import { getSnippets } from '../../redux/slices/codeSnippet'
+import { getCategories, getSnippets } from '../../redux/slices/codeSnippet'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SnippetsList from '../Components/SnippetsList'
 import { MoonLoader } from 'react-spinners'
@@ -13,9 +13,18 @@ const UserSnippets = () => {
   const user = useUser()
   const { page } = useParams()
   const pageNumber = parseInt(page, 10)
+
+  const [search, setSearch] = useSearchParams({ name: '', categories: [] })
+  const snippetNames = snippets.snippets.map((item) => {
+    return item.name
+  })
+  console.log(snippetNames)
+  const categoryNames = snippets.categories
+  console.log(categoryNames)
   useEffect(() => {
     if (user) {
       dispatch(getSnippets({ userId: user.user.id, pageNumber }))
+      dispatch(getCategories(user.user.id))
     }
   }, [dispatch, user.user.id, pageNumber])
   return (
@@ -32,6 +41,12 @@ const UserSnippets = () => {
             type="text"
             placeholder="Search"
             className=" w-full px-3 py-2 rounded-lg border-medium border-black"
+            onChange={(e) => {
+              setSearch((prev) => {
+                prev.set('name', e.target.value)
+                return prev
+              })
+            }}
           />
 
           <div className="flex lg:flex-col gap-2 flex-wrap">

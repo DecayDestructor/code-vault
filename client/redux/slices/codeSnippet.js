@@ -169,12 +169,11 @@ const snippetSlice = createSlice({
       state.loading = true
     })
     builder.addCase(addSnippet.fulfilled, (state, action) => {
-      // state.loading = false
-      // state.snippets.concat(action.payload)
       return {
         ...state,
         loading: false,
         snippets: [...state.snippets, action.payload],
+        categories: [...state.categories, action.payload.categories],
       }
     })
     builder.addCase(addSnippet.rejected, (state, action) => {
@@ -229,6 +228,7 @@ const snippetSlice = createSlice({
             : snippet
         }),
         oneSnippet: action.payload,
+        categories: [...state.categories, action.payload.categories],
       }
     })
     builder.addCase(editSnippet.rejected, (state, action) => {

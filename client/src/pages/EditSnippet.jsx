@@ -10,6 +10,7 @@ import {
   addCategory,
   getCategories,
 } from '../../redux/slices/codeSnippet'
+import Loading from '../Components/Loading'
 import {
   Dropdown,
   DropdownTrigger,
@@ -45,6 +46,7 @@ const CodeEditorComponent = ({ mode, className, value, onChange }) => {
 
 const EditSnippet = () => {
   const state = useSelector((state) => state.snippetReducer)
+  console.log(state)
   const user = useUser()
   const [selectedLanguage, setSelectedLanguage] = useState('JavaScript')
   const [value, setValue] = useState('')
@@ -59,13 +61,6 @@ const EditSnippet = () => {
   const dispatch = useDispatch()
   const { snippetID } = useParams()
   const snippet = state.oneSnippet
-  let idFetch = false
-  if (snippet) {
-    if (snippet.snippetID) {
-      idFetch = true
-    }
-  }
-
   useEffect(() => {
     if (snippetID) {
       dispatch(getOneSnippet(snippetID))
@@ -73,7 +68,8 @@ const EditSnippet = () => {
   }, [dispatch, snippetID])
 
   useEffect(() => {
-    if (snippet) {
+    if (!state.loading && snippet) {
+      console.log(snippet)
       setValue(snippet.code)
       setName(snippet.name)
       setDescription(snippet.description)
@@ -81,7 +77,7 @@ const EditSnippet = () => {
       setSelectedLanguage(snippet.language)
       setSelectedCategories(snippet.categories)
     }
-  }, [idFetch])
+  }, [state.loading])
   useEffect(() => {
     dispatch(getCategories(user.user.id))
   }, [dispatch, user.user.id])
@@ -112,7 +108,9 @@ const EditSnippet = () => {
     setCategory('')
     setCategoryInput(false)
   }
-
+  if (state.loading) {
+    return <Loading />
+  }
   return (
     <form className="flex flex-col items-center gap-6" onSubmit={handleSubmit}>
       <div className="lg:flex w-[90%] max-lg:flex max-lg:flex-col max-lg:items-center max-lg:my-5">
