@@ -5,19 +5,41 @@ import DeleteModal from './DeleteModal'
 import { Link, useNavigate } from 'react-router-dom'
 import { Edit, HistoryIcon } from 'lucide-react'
 import { Tooltip } from '@nextui-org/react'
-import { deleteALl } from '../../redux/slices/versionControl'
-const SnippetsList = ({ snippets }) => {
-  const [localSnippets, setLocalSnippets] = useState(snippets)
+import { deleteAll } from '../../redux/slices/versionControl'
+
+const SnippetsList = ({ snippets, name, categories }) => {
+  const [localSnippets, setLocalSnippets] = useState(() => {
+    return snippets.filter((snippet) => {
+      const nameMatch =
+        name.trim() === '' ||
+        snippet.name.toLowerCase().includes(name.toLowerCase().trim())
+      const categoryMatch =
+        categories.length === 0 ||
+        snippet.categories.some((category) => categories.includes(category))
+      return nameMatch && categoryMatch
+    })
+  })
 
   useEffect(() => {
-    setLocalSnippets(snippets)
-  }, [snippets])
+    setLocalSnippets(
+      snippets.filter((snippet) => {
+        const nameMatch =
+          name.trim() === '' ||
+          snippet.name.toLowerCase().includes(name.toLowerCase().trim())
+        const categoryMatch =
+          categories.length === 0 ||
+          snippet.categories.some((category) => categories.includes(category))
+        return nameMatch && categoryMatch
+      })
+    )
+  }, [snippets, name, categories])
 
   const handleDelete = (id) => {
     setLocalSnippets(
       localSnippets.filter((snippet) => snippet.snippetID !== id)
     )
   }
+
   return (
     <div className="flex flex-col gap-7">
       {localSnippets.map((snippet) => (
@@ -51,7 +73,7 @@ const SnippetCard = ({
   const handleDeleteClick = () => {
     onDelete(snippetID)
     dispatch(deleteSnippet(snippetID))
-    dispatch(deleteALl(snippetID))
+    dispatch(deleteAll(snippetID))
   }
 
   return (
@@ -71,12 +93,6 @@ const SnippetCard = ({
       <div className="mb-4 max-md:text-sm">
         <p>{date}</p>{' '}
       </div>
-      {/* <button
-        className="grow flex items-center justify-center"
-        onClick={handleDeleteClick}
-      >
-        <TrashIcon />
-      </button> */}
       <div className="flex gap-5 justify-between items-center">
         <DeleteModal handleDelete={handleDeleteClick} />
         <Tooltip content="Edit Snippet">
