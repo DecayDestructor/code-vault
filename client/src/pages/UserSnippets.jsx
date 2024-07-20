@@ -25,7 +25,7 @@ const UserSnippets = () => {
   // console.log(snippetNames)
   const categoryNames = snippets.categories
   // console.log(categoryNames)
-  console.log(search.get('categories'))
+  // console.log(search.get('categories').split(','))
   const [categories, setCategories] = useState([])
   // console.log(categories)
   useEffect(() => {
@@ -84,7 +84,7 @@ const UserSnippets = () => {
                 key={index}
                 search={search}
                 setSearch={setSearch}
-                // setCategories={setCategories}
+                setCategories={setCategories}
               />
             ))}
           </div>
@@ -109,7 +109,7 @@ const UserSnippets = () => {
             name={search.get('name')}
             categories={
               search.get('categories')
-                ? search.get('categories').split(',')
+                ? search.get('categories').split(',').splice(1)
                 : []
             }
           />

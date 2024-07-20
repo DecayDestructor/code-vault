@@ -219,6 +219,7 @@ const snippetSlice = createSlice({
     })
     builder.addCase(editSnippet.fulfilled, (state, action) => {
       console.log(state.snippets)
+      console.log(action.payload)
       return {
         ...state,
         loading: false,
@@ -246,6 +247,7 @@ const snippetSlice = createSlice({
     })
     builder.addCase(restoreVersion.fulfilled, (state, action) => {
       return {
+        ...state,
         loading: false,
         snippets: state.snippets.map((snippet) =>
           snippet.snippetID === action.payload.snippetID

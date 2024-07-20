@@ -46,7 +46,7 @@ const CodeEditorComponent = ({ mode, className, value, onChange }) => {
 
 const EditSnippet = () => {
   const state = useSelector((state) => state.snippetReducer)
-  console.log(state)
+  // console.log(state)
   const user = useUser()
   const [selectedLanguage, setSelectedLanguage] = useState('JavaScript')
   const [value, setValue] = useState('')
@@ -76,6 +76,7 @@ const EditSnippet = () => {
       setPublicSnippet(snippet.publicSnippet)
       setSelectedLanguage(snippet.language)
       setSelectedCategories(snippet.categories)
+      console.log(selectedCategories)
     }
   }, [state.loading])
   useEffect(() => {
@@ -108,7 +109,7 @@ const EditSnippet = () => {
     setCategory('')
     setCategoryInput(false)
   }
-  if (state.loading) {
+  if (state.loading || selectedCategories.length === 0) {
     return <Loading />
   }
   return (

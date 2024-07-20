@@ -5,9 +5,10 @@ import DeleteModal from './DeleteModal'
 import { Link, useNavigate } from 'react-router-dom'
 import { Edit, HistoryIcon } from 'lucide-react'
 import { Tooltip } from '@nextui-org/react'
-import { deleteAll } from '../../redux/slices/versionControl'
+import { deleteALl } from '../../redux/slices/versionControl'
 
 const SnippetsList = ({ snippets, name, categories }) => {
+  console.log(categories)
   const [localSnippets, setLocalSnippets] = useState(() => {
     return snippets.filter((snippet) => {
       const nameMatch =
@@ -15,7 +16,11 @@ const SnippetsList = ({ snippets, name, categories }) => {
         snippet.name.toLowerCase().includes(name.toLowerCase().trim())
       const categoryMatch =
         categories.length === 0 ||
-        snippet.categories.some((category) => categories.includes(category))
+        // snippet.categories.some((category) => categories.includes(category))
+        categories.every((category) => {
+          console.log(category)
+          return snippet.categories.includes(category) && category != ','
+        })
       return nameMatch && categoryMatch
     })
   })
@@ -28,11 +33,18 @@ const SnippetsList = ({ snippets, name, categories }) => {
           snippet.name.toLowerCase().includes(name.toLowerCase().trim())
         const categoryMatch =
           categories.length === 0 ||
-          snippet.categories.some((category) => categories.includes(category))
+          // snippet.categories.every((category) => {
+          //   console.log(category)
+          //   return categories.includes(category)
+          // })
+          //remove the first element of the categories array
+          categories.every((category) => {
+            return snippet.categories.includes(category) && category != ','
+          })
         return nameMatch && categoryMatch
       })
     )
-  }, [snippets, name, categories])
+  }, [snippets, name, JSON.stringify(categories)])
 
   const handleDelete = (id) => {
     setLocalSnippets(
@@ -73,7 +85,7 @@ const SnippetCard = ({
   const handleDeleteClick = () => {
     onDelete(snippetID)
     dispatch(deleteSnippet(snippetID))
-    dispatch(deleteAll(snippetID))
+    dispatch(deleteALl(snippetID))
   }
 
   return (

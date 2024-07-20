@@ -82,13 +82,15 @@ router.put('/edit', async (req, res) => {
     const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
       { snippetID: snippetUpdates.snippetID },
       {
-        name: snippetUpdates.name,
-        publicSnippet: snippetUpdates.publicSnippet,
-        description: snippetUpdates.description,
-        code: snippetUpdates.code,
-        language: snippetUpdates.language,
+        // name: snippetUpdates.name,
+        // publicSnippet: snippetUpdates.publicSnippet,
+        // description: snippetUpdates.description,
+        // code: snippetUpdates.code,
+        // language: snippetUpdates.language,
+
+        // categories: snippetUpdates.categories,
+        ...snippetUpdates,
         version: record.version + 1,
-        categories: snippetUpdates.categories,
       },
       { new: true }
     )

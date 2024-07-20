@@ -95,12 +95,8 @@ router.put('/restore', async (req, res) => {
     const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
       { snippetID: snippet.snippetID },
       {
-        name: snippet.name,
-        publicSnippet: snippet.publicSnippet,
-        description: snippet.description,
-        code: snippet.code,
-        language: snippet.language,
-        version: snippet.version + 1,
+        ...snippet,
+        date: Date.now(),
       },
       { new: true }
     )

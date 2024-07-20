@@ -11,14 +11,18 @@ import {
 import { useSelector } from 'react-redux'
 import { Plus } from 'lucide-react'
 
-export default function SelectCategory(props) {
-  const { setCategoryInput } = props || false
-  const { setSelectedCategories } = props
-  const { selectedCategories } = props || []
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]))
+export default function SelectCategory({
+  setCategoryInput,
+  selectedCategories,
+  setSelectedCategories,
+}) {
+  const [selectedKeys, setSelectedKeys] = React.useState(
+    new Set(selectedCategories)
+  )
   const categories = useSelector((state) => state.snippetReducer.categories) // console.log(categories)
   console.log(selectedCategories)
   // console.log(categories)
+  console.log(selectedKeys)
   const selectedCategoriesFunction = useCallback(
     () => [...selectedKeys],
     [selectedKeys]
@@ -37,12 +41,12 @@ export default function SelectCategory(props) {
           </Button>
         </DropdownTrigger>
         <DropdownMenu
-          aria-label="Multiple selection example"
           variant="flat"
           closeOnSelect={false}
           selectionMode="multiple"
           selectedKeys={selectedKeys}
           onSelectionChange={setSelectedKeys}
+          aria-label="Multiple selection example"
         >
           {categories.map((category) => {
             return <DropdownItem key={category}>{category}</DropdownItem>

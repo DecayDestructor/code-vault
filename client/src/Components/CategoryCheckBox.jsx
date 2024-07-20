@@ -17,17 +17,13 @@ export default function CategoryCheckBox({ categoryName, search, setSearch }) {
       }
       const updatedSearch = new URLSearchParams(prev)
       updatedSearch.set('categories', Array.from(categories).join(','))
-      console.log(updatedSearch.get('categories'))
+      // console.log(updatedSearch.get('categories'))
       //convert updatedSearch.get('categories') to array
-      console.log(updatedSearch.get('categories').split(','))
+      // console.log(updatedSearch.get('categories').split(','))
       // setCategories(updatedSearch.get('categories').split(','))
       return updatedSearch
     })
-  }, [isSelected, categoryName, setSearch, setCategories])
-
-  React.useEffect(() => {
-    console.log('isSelected state changed:', isSelected)
-  }, [isSelected])
+  }, [isSelected, categoryName, setSearch])
 
   return (
     <div className="flex flex-col gap-2 font-lato">
