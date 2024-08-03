@@ -144,6 +144,7 @@ router.get('/getAllBySearchParam', async (req, res) => {
   try {
     const snippets = await codeSnippet.find({
       $text: { $search: searchParam },
+      publicSnippet: true,
     })
     if (snippets.length === 0) {
       return res.status(404).send({ message: 'No Snippets found' })
