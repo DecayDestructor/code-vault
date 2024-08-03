@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { store } from '../redux/store'
 import { lazy } from 'react'
 import { Toaster } from 'sonner'
+import { LazyMotion } from 'framer-motion'
 
 const Login = lazy(() => {
   return import('./pages/Login')
@@ -40,6 +41,11 @@ const VersionControl = lazy(() => {
 const PreviousVersion = lazy(() => {
   return import('./pages/PreviousVersion')
 })
+
+const ExplorePage = lazy(() => {
+  return import('./pages/ExplorePage')
+})
+
 const App = () => {
   return (
     <div className="bg-white h-screen w-screen">
@@ -78,6 +84,7 @@ const App = () => {
                 path="/snippet/:snippetID/version/:editID"
                 element={<PreviousVersion />}
               />
+              <Route path="/explore-snippets/*" element={<ExplorePage />} />
             </Route>
             <Route
               path="*"

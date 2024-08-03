@@ -14,8 +14,6 @@ const LandingPage = () => {
   const { user, isSignedIn } = useUser()
   const dispatch = useDispatch()
   const userState = useSelector((state) => state.userReducer)
-  console.log(userState)
-  // console.log(userState.user.userId)
   useEffect(() => {
     const checkAndRegisterUser = async () => {
       if (isSignedIn) {

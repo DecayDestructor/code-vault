@@ -2,7 +2,7 @@ import { useUser } from '@clerk/clerk-react'
 import { Button } from '@nextui-org/react'
 import { getCategories, getSnippets } from '../../redux/slices/codeSnippet'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SnippetsList from '../Components/SnippetsList'
 import { MoonLoader } from 'react-spinners'
@@ -16,18 +16,9 @@ const UserSnippets = () => {
   const { page } = useParams()
   const pageNumber = parseInt(page, 10)
 
-  // const [localSnippets, setLocalSnippets] = useState([])
   const [search, setSearch] = useSearchParams({ name: '', categories: [] })
-  // console.log(search.get('categories'))
-  const snippetNames = snippets.snippets.map((item) => {
-    return item.name
-  })
-  // console.log(snippetNames)
+
   const categoryNames = snippets.categories
-  // console.log(categoryNames)
-  // console.log(search.get('categories').split(','))
-  const [categories, setCategories] = useState([])
-  // console.log(categories)
   useEffect(() => {
     if (user) {
       dispatch(getSnippets({ userId: user.user.id, pageNumber }))
@@ -73,8 +64,11 @@ const UserSnippets = () => {
             <Button
               color="default"
               className=" w-full font-semibold font-lato tracking-wide"
+              onClick={() => {
+                navigate('/explore-snippets')
+              }}
             >
-              Create Tag
+              Explore Snippets
             </Button>
           </div>
           <div className="flex lg:flex-col gap-2 flex-wrap max-lg:pb-5 max-lg:items-center justify-center">
@@ -84,7 +78,6 @@ const UserSnippets = () => {
                 key={index}
                 search={search}
                 setSearch={setSearch}
-                setCategories={setCategories}
               />
             ))}
           </div>

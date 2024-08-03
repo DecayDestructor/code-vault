@@ -46,7 +46,7 @@ const CreateSnippet = () => {
   // const state = useSelector((state) => state.snippetReducer)
   // console.log(state)
   const user = useUser()
-  const [selectedLanguage, setSelectedLanguage] = useState('JavaScript')
+  const [selectedCodinglanguage, setCodingLanguage] = useState('JavaScript')
   const [value, setValue] = useState('')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -64,9 +64,10 @@ const CreateSnippet = () => {
       description: description,
       publicSnippet: publicSnippet,
       code: value,
-      language: selectedLanguage.toLowerCase(),
+      coding_language: selectedCodinglanguage.toLowerCase(),
       categories: selectedCategories,
     }
+    console.log(newSnippet)
     dispatch(addSnippet(newSnippet))
   }
 
@@ -202,7 +203,7 @@ const CreateSnippet = () => {
                 <DropdownTrigger>
                   <Button variant="bordered">
                     <h1 className="font-semibold text-sm">
-                      {selectedLanguage || 'JavaScript'}
+                      {selectedCodinglanguage || 'JavaScript'}
                     </h1>
                   </Button>
                 </DropdownTrigger>
@@ -216,7 +217,7 @@ const CreateSnippet = () => {
                       <DropdownItem
                         key={language}
                         onClick={() => {
-                          setSelectedLanguage(language)
+                          setCodingLanguage(language)
                         }}
                       >
                         {language}
@@ -233,7 +234,7 @@ const CreateSnippet = () => {
             Preview
           </span>
           <CodeEditorComponent
-            mode={selectedLanguage || 'JavaScript'}
+            mode={selectedCodinglanguage || 'JavaScript'}
             value={value}
             onChange={(newValue) => {
               setValue(newValue)

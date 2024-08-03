@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
   Button,
-  Input,
-  DropdownSection,
 } from '@nextui-org/react'
 import { useSelector } from 'react-redux'
 import { Plus } from 'lucide-react'
@@ -20,9 +18,6 @@ export default function SelectCategory({
     new Set(selectedCategories)
   )
   const categories = useSelector((state) => state.snippetReducer.categories) // console.log(categories)
-  console.log(selectedCategories)
-  // console.log(categories)
-  console.log(selectedKeys)
   const selectedCategoriesFunction = useCallback(
     () => [...selectedKeys],
     [selectedKeys]

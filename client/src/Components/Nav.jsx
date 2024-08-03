@@ -22,7 +22,6 @@ import { Link } from 'react-router-dom'
 import { navItems as menuItems } from '../data/Navbar'
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  
 
   return (
     <Navbar
@@ -36,16 +35,16 @@ export default function Nav() {
           className="sm:hidden"
         />
         <NavbarBrand>
-          <Link
-            to="/"
-            className="font-bold text-inherit text-2xl font-inter-tight"
-          >
+          <Link to="/" className="font-bold text-inherit text-2xl font-lato">
             Code Vault
           </Link>
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-7" justify="center">
+      <NavbarContent
+        className="hidden sm:flex gap-7 font-lato"
+        justify="center"
+      >
         {menuItems.map((item) => (
           <NavbarItem key={item.label}>
             <Link to={item.src}>{item.label}</Link>

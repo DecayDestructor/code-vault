@@ -92,6 +92,7 @@ const Snippet = () => {
       </div>
     )
   }
+  const editDate = new Date(snippet.oneSnippet?.date)?.toDateString()
 
   return (
     <div className=" flex flex-col m-auto mt-16 font-inter-tight w-[80%] h-[80%] gap-10">
@@ -138,7 +139,7 @@ const Snippet = () => {
             </div>
           )}
           <div className="mb-4 max-md:text-sm">
-            <p>{snippet.oneSnippet.date}</p>{' '}
+            <p>{editDate}</p>{' '}
           </div>
         </div>
       </div>

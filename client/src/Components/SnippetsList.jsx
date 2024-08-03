@@ -8,7 +8,6 @@ import { Tooltip } from '@nextui-org/react'
 import { deleteALl } from '../../redux/slices/versionControl'
 
 const SnippetsList = ({ snippets, name, categories }) => {
-  console.log(categories)
   const [localSnippets, setLocalSnippets] = useState(() => {
     return snippets.filter((snippet) => {
       const nameMatch =
@@ -16,7 +15,6 @@ const SnippetsList = ({ snippets, name, categories }) => {
         snippet.name.toLowerCase().includes(name.toLowerCase().trim())
       const categoryMatch =
         categories.length === 0 ||
-        // snippet.categories.some((category) => categories.includes(category))
         categories.every((category) => {
           console.log(category)
           return snippet.categories.includes(category) && category != ','
@@ -33,11 +31,6 @@ const SnippetsList = ({ snippets, name, categories }) => {
           snippet.name.toLowerCase().includes(name.toLowerCase().trim())
         const categoryMatch =
           categories.length === 0 ||
-          // snippet.categories.every((category) => {
-          //   console.log(category)
-          //   return categories.includes(category)
-          // })
-          //remove the first element of the categories array
           categories.every((category) => {
             return snippet.categories.includes(category) && category != ','
           })
@@ -51,7 +44,6 @@ const SnippetsList = ({ snippets, name, categories }) => {
       localSnippets.filter((snippet) => snippet.snippetID !== id)
     )
   }
-
   return (
     <div className="flex flex-col gap-7">
       {localSnippets.map((snippet) => (
@@ -87,7 +79,8 @@ const SnippetCard = ({
     dispatch(deleteSnippet(snippetID))
     dispatch(deleteALl(snippetID))
   }
-
+  // console.log(new Date(Date.parse(date)).toDateString())
+  const dateString = new Date(Date.parse(date)).toDateString()
   return (
     <div className="flex font-inter-tight justify-between px-10 bg-gray-50 p-7 h-full w-full rounded-lg shadow-md flex-wrap items-start hover:scale-[1.005] transition-transform duration-250 ease-soft-spring">
       <div className="flex flex-col justify-between gap-4 mb-4">
@@ -103,7 +96,7 @@ const SnippetCard = ({
         <p>{publicSnippet ? 'Public' : 'Private'}</p>
       </div>
       <div className="mb-4 max-md:text-sm">
-        <p>{date}</p>{' '}
+        <p>{dateString}</p>{' '}
       </div>
       <div className="flex gap-5 justify-between items-center">
         <DeleteModal handleDelete={handleDeleteClick} />

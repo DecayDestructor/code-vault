@@ -4,6 +4,7 @@ import axios from 'axios'
 import { toast } from 'sonner'
 
 export const addSnippet = createAsyncThunk('addSnippet', async (snippet) => {
+  console.log(snippet)
   try {
     const response = await axios.post(
       'http://localhost:5000/code-snippets/',
@@ -169,11 +170,12 @@ const snippetSlice = createSlice({
       state.loading = true
     })
     builder.addCase(addSnippet.fulfilled, (state, action) => {
+      console.log(action.payload)
       return {
         ...state,
         loading: false,
         snippets: [...state.snippets, action.payload],
-        categories: [...state.categories, action.payload.categories],
+        // categories: [...state.categories, action.payload.categories],
       }
     })
     builder.addCase(addSnippet.rejected, (state, action) => {
@@ -270,10 +272,15 @@ const snippetSlice = createSlice({
       }
     })
     builder.addCase(getCategories.fulfilled, (state, action) => {
+      const newCategories = action.payload.filter(
+        (category) => !state.categories.includes(category)
+      )
+      console.log('new categories :' + newCategories)
+
       return {
         ...state,
         loading: false,
-        categories: action.payload,
+        categories: [...state.categories, ...newCategories],
       }
     })
     builder.addCase(getCategories.rejected, (state, action) => {

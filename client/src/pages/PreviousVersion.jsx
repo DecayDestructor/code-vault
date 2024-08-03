@@ -75,10 +75,10 @@ const Snippet = () => {
       </div>
     )
   }
-  const editDate = new Date(editReducer.oneEdit.date).toDateString()
+  const editDate = new Date(editReducer.oneEdit?.date)?.toDateString()
   const restoreSnippet = {
     ...snippet.oneSnippet,
-    ...editReducer.oneEdit.diff.previous,
+    ...editReducer.oneEdit?.diff?.previous,
   }
   console.log(restoreSnippet)
   return (
@@ -86,12 +86,15 @@ const Snippet = () => {
       <div className="flex justify-between max-lg:flex-col gap-4">
         <div className=" flex flex-col gap-3 max-lg:items-center">
           <h1 className=" font-bold tracking-wid max-md:text-lg text-2xl p-0 flex">
-            {editReducer.oneEdit.diff.previous.name || snippet.oneSnippet.name}
+            {editReducer.oneEdit?.diff?.previous?.name ||
+              snippet.oneSnippet.name}
           </h1>
           <div className="max-md:text-sm flex gap-5 items-center">
-            {editReducer.oneEdit.diff.previous.categories.map((item, index) => {
-              return <p key={index}>{item}</p>
-            })}
+            {editReducer.oneEdit?.diff?.previous?.categories?.map(
+              (item, index) => {
+                return <p key={index}>{item}</p>
+              }
+            )}
           </div>
           <div className="flex items-center">
             <div className="flex gap-3 items-center p-3 px-6 bg-gray-50 rounded-md">
@@ -104,13 +107,13 @@ const Snippet = () => {
             </div>
           </div>
           <p className="text-gray-600 max-md:text-sm">
-            {editReducer.oneEdit.diff.previous.description ||
+            {editReducer.oneEdit?.diff?.previous?.description ||
               snippet.oneSnippet.description}
           </p>
         </div>
         <div className="flex flex-col gap-4 max-lg:items-center ">
           {/*public or private snippet*/}
-          {editReducer.oneEdit.diff.previous.publicSnippet ? (
+          {editReducer.oneEdit?.diff?.previous?.publicSnippet ? (
             <div className="max-md:text-sm flex gap-5 items-center">
               <p>Public</p>
             </div>
@@ -132,11 +135,11 @@ const Snippet = () => {
       <div className="w-full h-full self-center flex items-center justify-center">
         <AceEditor
           mode={
-            editReducer.oneEdit.diff.previous.language ||
+            editReducer.oneEdit?.diff?.previous?.language ||
             snippet.oneSnippet.language
           }
           value={
-            editReducer.oneEdit.diff.previous.code || snippet.oneSnippet.code
+            editReducer.oneEdit?.diff?.previous?.code || snippet.oneSnippet.code
           }
           theme="github"
           width="80%"

@@ -74,7 +74,7 @@ const EditSnippet = () => {
       setName(snippet.name)
       setDescription(snippet.description)
       setPublicSnippet(snippet.publicSnippet)
-      setSelectedLanguage(snippet.language)
+      setSelectedLanguage(snippet.coding_language)
       setSelectedCategories(snippet.categories)
       console.log(selectedCategories)
     }
@@ -92,7 +92,7 @@ const EditSnippet = () => {
       description,
       publicSnippet,
       code: value,
-      language: selectedLanguage.toLowerCase(),
+      coding_language: selectedLanguage.toLowerCase(),
       categories: selectedCategories,
     }
     const obj = {
@@ -109,7 +109,7 @@ const EditSnippet = () => {
     setCategory('')
     setCategoryInput(false)
   }
-  if (state.loading || selectedCategories.length === 0) {
+  if (state.loading) {
     return <Loading />
   }
   return (
