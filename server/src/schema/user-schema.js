@@ -15,17 +15,22 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  profilePicture: {
-    type: String,
-    required: true,
-  },
-  friendList: {
+  // profilePicture: {
+  //   type: String,
+  //   required: true,
+  // },
+  // friendList: {
+  //   type: [String],
+  //   default: [],
+  //   required: false,
+  // },
+  // bio: {
+  //   type: String,
+  //   required: false,
+  // },
+  categories: {
     type: [String],
     default: [],
-    required: false,
-  },
-  bio: {
-    type: String,
     required: false,
   },
 })

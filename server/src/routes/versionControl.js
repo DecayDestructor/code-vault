@@ -152,7 +152,7 @@ router.delete('/:snippetID/all', async (req, res) => {
   const snippetID = req.params.snippetID
   try {
     const records = await VersionControl.deleteMany({ snippetID })
-    if (records.deletedCount === 0) {
+    if (!records) {
       return res.status(404).send({ message: 'No edits found.' })
     }
     return res.status(200).send({ message: 'All edits deleted successfully.' })

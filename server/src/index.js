@@ -6,7 +6,7 @@ const app = express()
 import codeSnippetRouter from './routes/codeSnippet.js'
 import userManagementRouter from './routes/userManagement.js'
 import versionControlRouter from './routes/versionControl.js'
-
+import userRouter from './routes/user.js'
 dotenv.config()
 const PORT = process.env.PORT || 5000
 app.use(express.json())
@@ -22,6 +22,7 @@ mongoose
 app.use('/code-snippets', codeSnippetRouter)
 app.use('/user-management', userManagementRouter)
 app.use('/edit-snippets', versionControlRouter)
+app.use('/user', userRouter)
 // var obj1 = { name: 'John', age: 30, hobby: 'Football' }
 // var obj2 = { name: 'John', age: 35, hobby: 'Cricket' }
 // compareObjects(obj1, obj2)

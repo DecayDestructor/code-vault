@@ -1,5 +1,6 @@
 import express from 'express'
 import codeSnippet from '../schema/snippet-schema.js'
+import UserModel from '../schema/user-schema.js'
 import { v4 as uuidv4 } from 'uuid'
 const router = express.Router()
 
@@ -44,18 +45,21 @@ router.get('/getOneBySnippetID/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   // console.log('post request')
+  console.log(req.body)
   const snippetID = uuidv4()
   const date = new Date()
-  console.log(date.toDateString())
   const snippet = new codeSnippet({
     ...req.body,
     snippetID: snippetID,
-    date: date.toDateString(),
+    date: date,
     allowedUsers: [],
   })
   const name = snippet.name
   try {
-    const existingSnippet = await codeSnippet.findOne({ name })
+    const existingSnippet = await codeSnippet.findOne({
+      name,
+      userId: snippet.userId,
+    })
 
     if (existingSnippet) {
       return res
@@ -96,7 +100,7 @@ router.put('/restore', async (req, res) => {
       { snippetID: snippet.snippetID },
       {
         ...snippet,
-        date: Date.now(),
+        date: new Date(),
       },
       { new: true }
     )
@@ -130,6 +134,24 @@ router.get('/getCategoriesByUserID/:userId', async (req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).send({ message: 'Error occured, please try again' })
+  }
+})
+
+router.get('/getAllBySearchParam', async (req, res) => {
+  const { searchParam } = req.body
+  console.log('Search param:', searchParam)
+  console.log(await codeSnippet.collection.getIndexes())
+  try {
+    const snippets = await codeSnippet.find({
+      $text: { $search: searchParam },
+    })
+    if (snippets.length === 0) {
+      return res.status(404).send({ message: 'No Snippets found' })
+    }
+    res.status(200).send(snippets)
+  } catch (error) {
+    console.error('Search error:', error)
+    return res.status(500).send(error)
   }
 })
 
