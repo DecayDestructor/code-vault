@@ -137,10 +137,31 @@ router.get('/getCategoriesByUserID/:userId', async (req, res) => {
   }
 })
 
-router.get('/getAllBySearchParam', async (req, res) => {
-  const { searchParam } = req.body
-  console.log('Search param:', searchParam)
-  console.log(await codeSnippet.collection.getIndexes())
+router.get('/getAllBySearchParam/:searchParam?', async (req, res) => {
+  const { searchParam } = req.params
+  if (!searchParam) {
+    //return random snippets
+    const randomSnippet = await codeSnippet.aggregate([
+      { $match: { publicSnippet: true } },
+      { $sample: { size: 15 } },
+    ])
+    if (randomSnippet.length === 0) {
+      return res.status(404).send({ message: 'No Public Snippets found' })
+    }
+    return res.status(200).send(randomSnippet)
+  }
+
+  if (searchParam && searchParam.trim() === '') {
+    //return random entries from database that have publicSnippet field as true
+    const randomSnippet = await codeSnippet.aggregate([
+      { $match: { publicSnippet: true } },
+      { $sample: { size: 15 } },
+    ])
+    if (randomSnippet.length === 0) {
+      return res.status(404).send({ message: 'No Public Snippets found' })
+    }
+    return res.status(200).send(randomSnippet)
+  }
   try {
     const snippets = await codeSnippet.find({
       $text: { $search: searchParam },
