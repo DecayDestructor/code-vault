@@ -17,7 +17,7 @@ export const addSnippet = createAsyncThunk('addSnippet', async (snippet) => {
     )
     if (response.status === 200 || response.status === 201) {
       toast.success('Snippet Added Successfully', {
-        duration: 5000,
+        duration: 3000,
       })
     }
     return response.data
@@ -26,7 +26,7 @@ export const addSnippet = createAsyncThunk('addSnippet', async (snippet) => {
     const errorMessage =
       error.response?.data?.message || error.message || 'Something went wrong'
     toast.error(`${errorMessage}`, {
-      duration: 5000,
+      duration: 3000,
     })
 
     throw error
@@ -44,7 +44,7 @@ export const getSnippets = createAsyncThunk('getSnippets', async (obj) => {
     const errorMessage =
       error.response?.data?.message || error.message || 'Something went wrong'
     toast.error(`${errorMessage}`, {
-      duration: 5000,
+      duration: 3000,
     })
   }
 })
@@ -62,7 +62,7 @@ export const getOneSnippet = createAsyncThunk(
       const errorMessage =
         error.response?.data?.message || error.message || 'Something went wrong'
       toast.error(`${errorMessage}`, {
-        duration: 5000,
+        duration: 3000,
       })
     }
   }
@@ -92,7 +92,7 @@ export const editSnippet = createAsyncThunk('editSnippet', async (snippet) => {
       }
     )
     toast.success('Snippet updated successfully', {
-      duration: 5000,
+      duration: 3000,
     })
     return response.data
   } catch (error) {
@@ -100,7 +100,7 @@ export const editSnippet = createAsyncThunk('editSnippet', async (snippet) => {
     const errorMessage =
       error.response?.data?.message || error.message || 'Something went wrong'
     toast.error(`${errorMessage}`, {
-      duration: 5000,
+      duration: 3000,
     })
   }
 })
@@ -114,7 +114,7 @@ export const restoreVersion = createAsyncThunk(
         snippet
       )
       toast.success('Version restored successfully', {
-        duration: 5000,
+        duration: 3000,
       })
       return response.data
     } catch (error) {
@@ -122,7 +122,7 @@ export const restoreVersion = createAsyncThunk(
       const errorMessage =
         error.response?.data?.message || error.message || 'Something went wrong'
       toast.error(`${errorMessage}`, {
-        duration: 5000,
+        duration: 3000,
       })
     }
   }
@@ -140,8 +140,30 @@ export const getCategories = createAsyncThunk(
       const errorMessage =
         error.response?.data?.message || error.message || 'Something went wrong'
       toast.error(`${errorMessage}`, {
-        duration: 5000,
+        duration: 3000,
       })
+    }
+  }
+)
+
+export const getExploreSnippets = createAsyncThunk(
+  'getExploreSnippets',
+  async (searchParam) => {
+    console.log(searchParam)
+
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/code-snippets/getAllBySearchParam/${searchParam}`
+      )
+      return response.data
+    } catch (error) {
+      console.error(error)
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Something went wrong'
+      toast.error(`${errorMessage}`, {
+        duration: 3000,
+      })
+      return []
     }
   }
 )
@@ -155,6 +177,7 @@ const snippetSlice = createSlice({
     error: null,
     edits: [],
     categories: [],
+    exploreSnippets: [],
   },
   reducers: {
     addCategory: (state, action) => {
@@ -285,6 +308,26 @@ const snippetSlice = createSlice({
     })
     builder.addCase(getCategories.rejected, (state, action) => {
       return {
+        loading: false,
+        error: action.error.message,
+      }
+    })
+    builder.addCase(getExploreSnippets.pending, (state) => {
+      return {
+        ...state,
+        loading: true,
+      }
+    })
+    builder.addCase(getExploreSnippets.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        exploreSnippets: action.payload,
+      }
+    })
+    builder.addCase(getExploreSnippets.rejected, (state, action) => {
+      return {
+        ...state,
         loading: false,
         error: action.error.message,
       }

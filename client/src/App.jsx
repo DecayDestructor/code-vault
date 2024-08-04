@@ -84,7 +84,11 @@ const App = () => {
                 path="/snippet/:snippetID/version/:editID"
                 element={<PreviousVersion />}
               />
-              <Route path="/explore-snippets/*" element={<ExplorePage />} />
+              <Route path="/explore-snippets" element={<ExplorePage />} />
+              <Route
+                path="/explore-snippets/:searchParam"
+                element={<ExplorePage />}
+              />
             </Route>
             <Route
               path="*"

@@ -8,17 +8,22 @@ export default function CategoryCheckBox({ categoryName, search, setSearch }) {
   })
 
   React.useEffect(() => {
-    setSearch((prev) => {
-      const categories = new Set(prev.get('categories')?.split(',') || [])
-      if (isSelected) {
-        categories.add(categoryName)
-      } else {
-        categories.delete(categoryName)
+    setSearch(
+      (prev) => {
+        const categories = new Set(prev.get('categories')?.split(',') || [])
+        if (isSelected) {
+          categories.add(categoryName)
+        } else {
+          categories.delete(categoryName)
+        }
+        const updatedSearch = new URLSearchParams(prev)
+        updatedSearch.set('categories', Array.from(categories).join(','))
+        return updatedSearch
+      },
+      {
+        replace: true,
       }
-      const updatedSearch = new URLSearchParams(prev)
-      updatedSearch.set('categories', Array.from(categories).join(','))
-      return updatedSearch
-    })
+    )
   }, [isSelected, categoryName, setSearch])
 
   return (

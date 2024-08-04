@@ -44,10 +44,15 @@ const UserSnippets = () => {
             placeholder="Search"
             className=" w-full px-3 py-2 rounded-lg border-medium border-black"
             onChange={(e) => {
-              setSearch((prev) => {
-                prev.set('name', e.target.value)
-                return prev
-              })
+              setSearch(
+                (prev) => {
+                  prev.set('name', e.target.value)
+                  return prev
+                },
+                {
+                  replace: true,
+                }
+              )
             }}
           />
 
