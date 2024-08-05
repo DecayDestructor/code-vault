@@ -1,26 +1,43 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { getExploreSnippets } from '../../redux/slices/codeSnippet'
-import { Bookmark, GitFork, Heart, Search } from 'lucide-react'
-import { Button } from '@nextui-org/react'
+import { Search, Bookmark, GitFork, Heart } from 'lucide-react'
 import Loading from '../Components/Loading'
-import { useNavigate } from 'react-router-dom'
 import { Tooltip } from '@nextui-org/react'
-import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { useUser } from '@clerk/clerk-react'
+import { getUser, registerUser } from '../../redux/slices/userManagement'
+
 const SnippetCard = ({
   name,
   description,
   date,
   snippetID,
   coding_language,
+  childrenVariant,
+  liked,
+  saved,
+  forked,
 }) => {
-  // const dispatch = useDispatch()
-  // const navigate = useNavigate()
-  // console.log(new Date(Date.parse(date)).toDateString())
+  const { user, isSignedIn } = useUser()
+  const dispatch = useDispatch()
+
   const dateString = new Date(Date.parse(date)).toDateString()
+  const handleLikeButtonClick = () => {
+    // if (isSignedIn) {
+    //   dispatch(
+    //      ? { type: 'DELETE_LIKE', payload: { snippetID, userID: user.id } }
+    //       : { type: 'ADD_LIKE', payload: { snippetID, userID: user.id } }
+    //   )
+    // }
+  }
+
   return (
-    <div className="flex font-inter-tight justify-between px-10 bg-gray-50 p-7 w-[45%] max-lg:w-full rounded-lg shadow-md flex-wrap items-start hover:scale-[1.005] transition-transform duration-250 ease-soft-spring m-3 grow mx-6">
+    <motion.div
+      className="flex font-inter-tight justify-between px-10 bg-gray-50 p-7 w-[45%] max-lg:w-full rounded-lg shadow-md flex-wrap items-start hover:scale-[1.005] transition-transform duration-250 ease-soft-spring m-3 grow mx-6"
+      variants={childrenVariant}
+    >
       <div className="flex flex-col justify-between gap-4 mb-4">
         <Link
           className="miniHeader md:text-xl max-md:text-medium font-bold tracking-wide"
@@ -40,39 +57,84 @@ const SnippetCard = ({
       </div>
       <div className="flex gap-5 justify-between items-center">
         <Tooltip content="Fork">
-          <button>
-            <GitFork size={18} />
+          <button disabled={!isSignedIn}>
+            <GitFork size={18} fill={forked ? 'black' : 'none'} />
           </button>
         </Tooltip>
         <Tooltip content="Like Snippet">
-          <button>
-            <Heart size={18} />
+          <button disabled={!isSignedIn}>
+            <Heart size={18} fill={liked ? 'black' : 'none'} />
           </button>
         </Tooltip>
         <Tooltip content="Bookmark">
-          <button>
-            <Bookmark size={18} />
+          <button disabled={!isSignedIn}>
+            <Bookmark size={18} fill={saved ? 'black' : 'none'} />
           </button>
         </Tooltip>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
 const ExplorePage = () => {
+  const { isSignedIn, user, isLoaded } = useUser()
+
+  const parentVariant = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: 'easeInOut',
+        staggerChildren: 0.2,
+        delayChildren: 0.2,
+      },
+    },
+  }
+
+  const childrenVariant = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.3, ease: 'backOut' },
+    },
+  }
+
   const explorePageSnippets = useSelector(
     (state) => state.snippetReducer.exploreSnippets
   )
-  const state = useSelector((state) => state.snippetReducer)
-  console.log(state)
-
   const loading = useSelector((state) => state.snippetReducer.loading)
+  const userState = useSelector((state) => state.userReducer.user)
+
   const dispatch = useDispatch()
   const [searchQuery, setSearchQuery] = useState('')
   const [searchParam, setSearchParam] = useState('')
+
   useEffect(() => {
     dispatch(getExploreSnippets(searchParam))
   }, [dispatch, searchParam])
+
+  useEffect(() => {
+    const checkAndRegisterUser = async () => {
+      if (isLoaded && isSignedIn) {
+        dispatch(getUser(user.id))
+        if (!userState) {
+          dispatch(
+            registerUser({
+              name: user.fullName,
+              email: user.primaryEmailAddress.emailAddress,
+              userId: user.id,
+              profilePicture: user.imageUrl,
+            })
+          )
+        }
+      }
+    }
+    checkAndRegisterUser()
+  }, [dispatch, isSignedIn, JSON.stringify(user)])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -80,7 +142,7 @@ const ExplorePage = () => {
     setSearchQuery('')
   }
 
-  if (loading) {
+  if (loading || !isLoaded) {
     return <Loading />
   }
 
@@ -114,19 +176,28 @@ const ExplorePage = () => {
             </p>
           )
         )}
-        <div className="flex flex-wrap justify-center max-lg:flex-col w-full">
+        <motion.div
+          className="flex flex-wrap justify-center max-lg:flex-col w-full"
+          initial="hidden"
+          animate="visible"
+          variants={parentVariant}
+        >
           {explorePageSnippets.length > 0 &&
             explorePageSnippets.map((snippet) => (
               <SnippetCard
-                key={snippet.id}
+                key={snippet.snippetID}
                 name={snippet.name}
                 description={snippet.description}
                 date={snippet.date}
-                snippetID={snippet.id}
+                snippetID={snippet.snippetID}
                 coding_language={snippet.coding_language}
+                liked={snippet.likes.includes(user.id)}
+                saved={snippet.bookmarked.includes(user.id)}
+                forked={snippet.forked.includes(user.id)}
+                childrenVariant={childrenVariant}
               />
             ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   )

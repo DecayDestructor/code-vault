@@ -54,16 +54,16 @@ const snippetSchema = new mongoose.Schema(
       default: [],
     },
     likes: {
-      type: Number,
-      default: 0,
+      type: [String],
+      default: [],
     },
-    saves: {
-      type: Number,
-      default: 0,
+    bookmarked: {
+      type: [String],
+      default: [],
     },
-    forks: {
-      type: Number,
-      default: 0,
+    forked: {
+      type: [String],
+      default: [],
     },
   },
   {

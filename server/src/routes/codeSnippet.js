@@ -177,4 +177,63 @@ router.get('/getAllBySearchParam/:searchParam?', async (req, res) => {
   }
 })
 
+//route to add or remove like of a user in a snippet
+router.put('/handleLike', async (req, res) => {
+  const { type, payload } = req.body
+  if (type === 'ADD_LIKE') {
+    const { userId, snippetID } = payload
+    try {
+      const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
+        { snippetID: snippetID },
+        { $addToSet: { likes: userId } },
+        { new: true }
+      )
+      res.json(updatedSnippetDoc)
+    } catch (error) {
+      res.status(500).send({ message: 'Server Error.' })
+    }
+  } else {
+    const { userId, snippetID } = payload
+    try {
+      const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
+        { snippetID: snippetID },
+        { $pull: { likes: userId } },
+        { new: true }
+      )
+      res.json(updatedSnippetDoc)
+    } catch (error) {
+      res.status(500).send({ message: 'Server Error.' })
+    }
+  }
+})
+
+router.put('/handleBookmark', async (req, res) => {
+  const { type, payload } = req.body
+  if (type === 'ADD_BOOKMARK') {
+    const { userId, snippetID } = payload
+    try {
+      const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
+        { snippetID: snippetID },
+        { $addToSet: { bookmarks: userId } },
+        { new: true }
+      )
+      res.json(updatedSnippetDoc)
+    } catch (error) {
+      res.status(500).send({ message: 'Server Error.' })
+    }
+  } else {
+    const { userId, snippetID } = payload
+    try {
+      const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
+        { snippetID: snippetID },
+        { $pull: { bookmarks: userId } },
+        { new: true }
+      )
+      res.json(updatedSnippetDoc)
+    } catch (error) {
+      res.status(500).send({ message: 'Server Error.' })
+    }
+  }
+})
+
 export default router

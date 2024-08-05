@@ -35,7 +35,6 @@ router.post('/register', async (req, res) => {
 })
 router.post('/add-access', async (req, res) => {
   const { email, snippetId, sender } = req.body
-  console.log(email, snippetId)
   try {
     const user = await UserModel.findOne({ email: email }) //find the targeted user using email
     if (!user) {
@@ -58,7 +57,6 @@ router.post('/add-access', async (req, res) => {
         .json({ message: 'You are not the owner of this snippet' })
     }
     if (record.userId == user.userId) {
-      console.log('Owner')
       return res
         .status(400)
         .json({ message: 'User is the owner of the snippet' })
@@ -108,7 +106,6 @@ router.post('/remove-access', async (req, res) => {
         .json({ message: 'Cannot remove access from a public snippet' })
     }
     if (record.userId == user.userId) {
-      console.log('Owner')
       return res
         .status(400)
         .json({ message: 'User is the owner of the snippet' })
@@ -155,5 +152,7 @@ router.get('/get-owner/:snippetId', async (req, res) => {
     res.status(500).send({ message: 'Server Error.' })
   }
 })
+
+//make one route for bookmarking snippet
 
 export default router
