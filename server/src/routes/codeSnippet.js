@@ -188,6 +188,8 @@ router.put('/handleLike', async (req, res) => {
         { $addToSet: { likes: userId } },
         { new: true }
       )
+      console.log(updatedSnippetDoc)
+
       res.json(updatedSnippetDoc)
     } catch (error) {
       res.status(500).send({ message: 'Server Error.' })
@@ -200,6 +202,7 @@ router.put('/handleLike', async (req, res) => {
         { $pull: { likes: userId } },
         { new: true }
       )
+      console.log(updatedSnippetDoc)
       res.json(updatedSnippetDoc)
     } catch (error) {
       res.status(500).send({ message: 'Server Error.' })
@@ -214,7 +217,7 @@ router.put('/handleBookmark', async (req, res) => {
     try {
       const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
         { snippetID: snippetID },
-        { $addToSet: { bookmarks: userId } },
+        { $addToSet: { bookmarked: userId } },
         { new: true }
       )
       res.json(updatedSnippetDoc)
@@ -226,7 +229,7 @@ router.put('/handleBookmark', async (req, res) => {
     try {
       const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
         { snippetID: snippetID },
-        { $pull: { bookmarks: userId } },
+        { $pull: { bookmarked: userId } },
         { new: true }
       )
       res.json(updatedSnippetDoc)

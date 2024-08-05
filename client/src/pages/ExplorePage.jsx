@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, Link } from 'react-router-dom'
-import { getExploreSnippets } from '../../redux/slices/codeSnippet'
+import { getExploreSnippets, handleLike } from '../../redux/slices/codeSnippet'
 import { Search, Bookmark, GitFork, Heart } from 'lucide-react'
 import Loading from '../Components/Loading'
 import { Tooltip } from '@nextui-org/react'
@@ -25,12 +25,17 @@ const SnippetCard = ({
 
   const dateString = new Date(Date.parse(date)).toDateString()
   const handleLikeButtonClick = () => {
-    // if (isSignedIn) {
-    //   dispatch(
-    //      ? { type: 'DELETE_LIKE', payload: { snippetID, userID: user.id } }
-    //       : { type: 'ADD_LIKE', payload: { snippetID, userID: user.id } }
-    //   )
-    // }
+    if (isSignedIn) {
+      dispatch(
+        handleLike({
+          type: liked ? 'REMOVE_LIKE' : 'ADD_LIKE',
+          payload: {
+            snippetID,
+            userId: user.id,
+          },
+        })
+      )
+    }
   }
 
   return (
@@ -62,7 +67,12 @@ const SnippetCard = ({
           </button>
         </Tooltip>
         <Tooltip content="Like Snippet">
-          <button disabled={!isSignedIn}>
+          <button
+            disabled={!isSignedIn}
+            onClick={() => {
+              handleLikeButtonClick()
+            }}
+          >
             <Heart size={18} fill={liked ? 'black' : 'none'} />
           </button>
         </Tooltip>
@@ -167,12 +177,12 @@ const ExplorePage = () => {
         </form>
         {searchParam.trim() !== '' && explorePageSnippets.length === 1 ? (
           <p className="text-gray-600 max-md:text-sm">
-            Found {explorePageSnippets.length} snippet
+            Found {explorePageSnippets?.length} snippet
           </p>
         ) : (
           searchParam.trim() !== '' && (
             <p className="text-gray-600 max-md:text-sm">
-              Found {explorePageSnippets.length} snippets
+              Found {explorePageSnippets?.length} snippets
             </p>
           )
         )}
