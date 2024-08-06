@@ -54,6 +54,7 @@ const UserSnippets = () => {
                 }
               )
             }}
+            value={search.get('name') || ''}
           />
 
           <div className="flex lg:flex-col gap-2 flex-wrap">

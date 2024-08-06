@@ -7,8 +7,6 @@ const VersionControlCard = (props) => {
   const { name, editMessage, editName, snippetID, date, editID } = props || ''
   const dispatch = useDispatch()
   const editDate = new Date(date)
-  // console.log(name, editMessage, editName)
-  console.log('rendering version control card')
   const handleDeleteClick = (editID) => {
     dispatch(deleteEdit(editID))
   }

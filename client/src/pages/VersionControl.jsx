@@ -1,7 +1,7 @@
 import { Button } from '@nextui-org/react'
 import { useUser } from '@clerk/clerk-react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getOneSnippet } from '../../redux/slices/codeSnippet.js'
 import { getHistory } from '../../redux/slices/versionControl.js'
@@ -14,11 +14,17 @@ const VersionControl = () => {
   const { snippetID } = useParams()
   const dispatch = useDispatch()
   const snippet = useSelector((state) => state)
-  console.log(snippet)
+  const [localEdits, setLocalEdits] = useState([])
+  const [filteredEdits, setFilteredEdits] = useState([])
 
   useEffect(() => {
     dispatch(getOneSnippet(snippetID))
   }, [dispatch, snippetID])
+
+  const [searchParams, setSearchParams] = useSearchParams({
+    name: '',
+    categories: [],
+  })
 
   useEffect(() => {
     if (snippet.snippetReducer.oneSnippet?.userId) {
@@ -30,6 +36,27 @@ const VersionControl = () => {
       )
     }
   }, [dispatch, snippetID, snippet.snippetReducer?.oneSnippet?.userId])
+
+  useEffect(() => {
+    setLocalEdits(
+      snippet?.versionControlReducer?.edits
+        ? snippet.versionControlReducer.edits
+        : []
+    )
+  }, [snippet.versionControlReducer.edits])
+
+  // console.log(localEdits)
+
+  useEffect(() => {
+    const nameFilter = searchParams.get('name')?.toLowerCase() || ''
+    const filtered = localEdits.filter((edit) => {
+      return (
+        edit.editName.toLowerCase().includes(nameFilter) ||
+        edit.name.toLowerCase().includes(nameFilter)
+      )
+    })
+    setFilteredEdits(filtered)
+  }, [searchParams, localEdits])
 
   if (
     snippet.versionControlReducer.loading ||
@@ -55,6 +82,14 @@ const VersionControl = () => {
             type="text"
             placeholder="Search"
             className="w-full px-3 py-2 rounded-lg border-medium border-black"
+            onChange={(e) => {
+              setSearchParams((prevParams) => {
+                const newParams = new URLSearchParams(prevParams)
+                newParams.set('name', e.target.value)
+                return newParams
+              })
+            }}
+            value={searchParams.get('name') || ''}
           />
 
           <div className="flex lg:flex-col gap-2 flex-wrap">
@@ -85,8 +120,7 @@ const VersionControl = () => {
           Please find the previous version of '
           {snippet.snippetReducer.oneSnippet.name}' here
         </div>
-        {!snippet.versionControlReducer.edits ||
-        snippet.versionControlReducer.edits.length == 0 ? (
+        {!filteredEdits || filteredEdits.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full">
             <h1 className="font-lato text-center text-black tracking-widest">
               No Edits Found
@@ -94,7 +128,7 @@ const VersionControl = () => {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {snippet.versionControlReducer.edits.map((item, index) => {
+            {filteredEdits.map((item, index) => {
               return <VersionControlCard key={index} {...item} />
             })}
           </div>

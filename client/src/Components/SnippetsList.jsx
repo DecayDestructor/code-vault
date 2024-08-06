@@ -27,11 +27,11 @@ const SnippetsList = ({ snippets, name, categories }) => {
     setLocalSnippets(
       snippets.filter((snippet) => {
         const nameMatch =
-          name.trim() === '' ||
-          snippet.name.toLowerCase().includes(name.toLowerCase().trim())
+          name?.trim() === '' ||
+          snippet.name.toLowerCase().includes(name?.toLowerCase().trim())
         const categoryMatch =
-          categories.length === 0 ||
-          categories.every((category) => {
+          categories?.length === 0 ||
+          categories?.every((category) => {
             return snippet.categories.includes(category) && category != ','
           })
         return nameMatch && categoryMatch
