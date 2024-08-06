@@ -77,6 +77,7 @@ snippetSchema.index({
   description: 'text',
   code: 'text',
   categories: 'text',
+  language: 'text',
 })
 
 const SnippetModel = mongoose.model('SnippetModel', snippetSchema)

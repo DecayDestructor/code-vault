@@ -1,7 +1,11 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, Link } from 'react-router-dom'
-import { getExploreSnippets, handleLike } from '../../redux/slices/codeSnippet'
+import {
+  getExploreSnippets,
+  handleLike,
+  handleSave,
+} from '../../redux/slices/codeSnippet'
 import { Search, Bookmark, GitFork, Heart } from 'lucide-react'
 import Loading from '../Components/Loading'
 import { Tooltip } from '@nextui-org/react'
@@ -22,13 +26,29 @@ const SnippetCard = ({
 }) => {
   const { user, isSignedIn } = useUser()
   const dispatch = useDispatch()
+  const [likedState, setLikedState] = useState(liked)
+  const [savedState, setSavedState] = useState(saved)
 
   const dateString = new Date(Date.parse(date)).toDateString()
   const handleLikeButtonClick = () => {
     if (isSignedIn) {
       dispatch(
         handleLike({
-          type: liked ? 'REMOVE_LIKE' : 'ADD_LIKE',
+          type: likedState ? 'REMOVE_LIKE' : 'ADD_LIKE',
+          payload: {
+            snippetID,
+            userId: user.id,
+          },
+        })
+      )
+    }
+  }
+  const handleSaveButtonClick = () => {
+    if (isSignedIn) {
+      // implement saving snippet logic
+      dispatch(
+        handleSave({
+          type: savedState ? 'REMOVE_BOOKMARK' : 'ADD_BOOKMARK',
           payload: {
             snippetID,
             userId: user.id,
@@ -63,7 +83,11 @@ const SnippetCard = ({
       <div className="flex gap-5 justify-between items-center">
         <Tooltip content="Fork">
           <button disabled={!isSignedIn}>
-            <GitFork size={18} fill={forked ? 'black' : 'none'} />
+            <GitFork
+              size={18}
+              fill={forked ? 'black' : 'none'}
+              color={isSignedIn ? 'black' : 'grey'}
+            />
           </button>
         </Tooltip>
         <Tooltip content="Like Snippet">
@@ -71,14 +95,29 @@ const SnippetCard = ({
             disabled={!isSignedIn}
             onClick={() => {
               handleLikeButtonClick()
+              setLikedState(!likedState)
             }}
           >
-            <Heart size={18} fill={liked ? 'black' : 'none'} />
+            <Heart
+              size={18}
+              fill={likedState ? 'black' : 'none'}
+              color={isSignedIn ? 'black' : 'grey'}
+            />
           </button>
         </Tooltip>
         <Tooltip content="Bookmark">
-          <button disabled={!isSignedIn}>
-            <Bookmark size={18} fill={saved ? 'black' : 'none'} />
+          <button
+            disabled={!isSignedIn}
+            onClick={() => {
+              handleSaveButtonClick()
+              setSavedState(!savedState)
+            }}
+          >
+            <Bookmark
+              size={18}
+              fill={savedState ? 'black' : 'none'}
+              color={isSignedIn ? 'black' : 'grey'}
+            />
           </button>
         </Tooltip>
       </div>
@@ -116,7 +155,7 @@ const ExplorePage = () => {
   const explorePageSnippets = useSelector(
     (state) => state.snippetReducer.exploreSnippets
   )
-  const loading = useSelector((state) => state.snippetReducer.loading)
+  const [localExplorePageSnippets, setLocalExplorePageSnippets] = useState([])
   const userState = useSelector((state) => state.userReducer.user)
 
   const dispatch = useDispatch()
@@ -146,13 +185,19 @@ const ExplorePage = () => {
     checkAndRegisterUser()
   }, [dispatch, isSignedIn, JSON.stringify(user)])
 
+  useEffect(() => {
+    if (explorePageSnippets) {
+      setLocalExplorePageSnippets(explorePageSnippets)
+    }
+  }, [JSON.stringify(explorePageSnippets), setLocalExplorePageSnippets])
+
   const handleSubmit = (e) => {
     e.preventDefault()
     setSearchParam(searchQuery)
     setSearchQuery('')
   }
 
-  if (loading || !isLoaded) {
+  if (!isLoaded) {
     return <Loading />
   }
 
@@ -192,8 +237,8 @@ const ExplorePage = () => {
           animate="visible"
           variants={parentVariant}
         >
-          {explorePageSnippets.length > 0 &&
-            explorePageSnippets.map((snippet) => (
+          {localExplorePageSnippets.length > 0 &&
+            localExplorePageSnippets.map((snippet) => (
               <SnippetCard
                 key={snippet.snippetID}
                 name={snippet.name}
@@ -201,9 +246,9 @@ const ExplorePage = () => {
                 date={snippet.date}
                 snippetID={snippet.snippetID}
                 coding_language={snippet.coding_language}
-                liked={snippet.likes.includes(user.id)}
-                saved={snippet.bookmarked.includes(user.id)}
-                forked={snippet.forked.includes(user.id)}
+                liked={snippet.likes.includes(user?.id) || false}
+                saved={snippet.bookmarked.includes(user?.id) || false}
+                forked={snippet.forked.includes(user?.id) || false}
                 childrenVariant={childrenVariant}
               />
             ))}

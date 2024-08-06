@@ -187,6 +187,24 @@ export const handleLike = createAsyncThunk('handleLike', async (obj) => {
   }
 })
 
+export const handleSave = createAsyncThunk('handleSave', async (obj) => {
+  console.log(obj)
+  try {
+    const response = await axios.put(
+      'http://localhost:5000/code-snippets/handleBookmark',
+      obj
+    )
+    return response.data //returns the updated snippet.
+  } catch (error) {
+    console.error(error)
+    const errorMessage =
+      error.response?.data?.message || error.message || 'Something went wrong'
+    toast.error(`${errorMessage}`, {
+      duration: 3000,
+    })
+  }
+})
+
 const snippetSlice = createSlice({
   name: 'fetchSnippet',
   initialState: {
@@ -377,6 +395,30 @@ const snippetSlice = createSlice({
       }
     })
     builder.addCase(handleLike.rejected, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        error: action.error.message,
+      }
+    })
+    builder.addCase(handleSave.pending, (state) => {
+      return {
+        ...state,
+        loading: true,
+      }
+    })
+    builder.addCase(handleSave.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        snippets: state.snippets.map((snippet) =>
+          snippet.snippetID === action.payload.snippetID
+            ? action.payload
+            : snippet
+        ),
+      }
+    })
+    builder.addCase(handleSave.rejected, (state, action) => {
       return {
         ...state,
         loading: false,
