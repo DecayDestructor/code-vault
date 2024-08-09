@@ -238,4 +238,33 @@ router.put('/handleBookmark', async (req, res) => {
   }
 })
 
+//route to return all snippets which the user has liked, which means like will have the userId in the array
+
+router.get('/getLikedSnippets/:userId', async (req, res) => {
+  const { userId } = req.params
+  try {
+    const likedSnippets = await codeSnippet.find({ likes: userId })
+    if (likedSnippets.length === 0) {
+      return res.status(404).send([])
+    }
+    res.status(200).send(likedSnippets)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
+
+//route to return all snippets which the user has bookmarked, which means bookmarked will have the userId in the array
+
+router.get('/getBookmarkedSnippets/:userId', async (req, res) => {
+  const { userId } = req.params
+  try {
+    const bookmarkedSnippets = await codeSnippet.find({ bookmarked: userId })
+    if (bookmarkedSnippets.length === 0 || !bookmarkedSnippets) {
+      return res.status(200).send([])
+    }
+    res.status(200).send(bookmarkedSnippets)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
 export default router

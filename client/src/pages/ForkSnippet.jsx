@@ -67,7 +67,7 @@ const CreateSnippet = () => {
   useEffect(() => {
     if (!loading && oneSnippet) {
       setValue(oneSnippet.code)
-      setName(oneSnippet.name)
+      setName(oneSnippet.name + ' (forked)')
       setDescription(oneSnippet.description)
       setPublicSnippet(oneSnippet.publicSnippet)
       setSelectedCategories(oneSnippet.categories)

@@ -50,6 +50,9 @@ const ForkSnippet = lazy(() => {
   return import('./pages/ForkSnippet')
 })
 
+const MyCollection = lazy(() => {
+  return import('./pages/MyCollection')
+})
 const App = () => {
   return (
     <div className="bg-white h-screen w-screen">
@@ -96,6 +99,10 @@ const App = () => {
               <Route
                 path="/fork-snippet/:snippetID"
                 element={<WithAuth Component={ForkSnippet} />}
+              />
+              <Route
+                path="/my-collection"
+                element={<WithAuth Component={MyCollection} />}
               />
             </Route>
             <Route
