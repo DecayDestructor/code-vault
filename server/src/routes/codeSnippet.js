@@ -45,7 +45,6 @@ router.get('/getOneBySnippetID/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   // console.log('post request')
-  console.log(req.body)
   const snippetID = uuidv4()
   const date = new Date()
   const snippet = new codeSnippet({

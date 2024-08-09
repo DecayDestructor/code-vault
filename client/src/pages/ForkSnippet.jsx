@@ -1,23 +1,23 @@
+//copy createSnippet.jsx
+
 import { useUser } from '@clerk/clerk-react'
 import { Button, snippet } from '@nextui-org/react'
-import { Eye, EyeOffIcon, Check, ArrowLeft } from 'lucide-react'
-import React, { useEffect, useMemo, useState } from 'react'
+import { ArrowLeft, Check, Eye, EyeOffIcon, Plus } from 'lucide-react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  addSnippet,
-  editSnippet,
-  getOneSnippet,
   addCategory,
+  addSnippet,
   getCategories,
+  getOneSnippet,
 } from '../../redux/slices/codeSnippet'
-import Loading from '../Components/Loading'
 import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
 } from '@nextui-org/react'
-import SelectCategory from '../Components/SelectCategory'
+
 import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-java'
@@ -27,6 +27,9 @@ import 'ace-builds/src-noconflict/mode-rust'
 import 'ace-builds/src-noconflict/theme-github'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import { languages } from '../data/CreateSnippet'
+import 'ace-builds/src-min-noconflict/ext-language_tools'
+import SelectCategory from '../Components/SelectCategory'
+import Loading from '../Components/Loading'
 import { useParams } from 'react-router-dom'
 
 const CodeEditorComponent = ({ mode, className, value, onChange }) => {
@@ -44,71 +47,60 @@ const CodeEditorComponent = ({ mode, className, value, onChange }) => {
   )
 }
 
-const EditSnippet = () => {
-  const state = useSelector((state) => state.snippetReducer)
-  // console.log(state)
+const CreateSnippet = () => {
+  const { snippetID } = useParams()
+  const { oneSnippet, loading } = useSelector((state) => state.snippetReducer)
+
   const user = useUser()
-  const [selectedLanguage, setSelectedLanguage] = useState('JavaScript')
+  const [selectedCodinglanguage, setCodingLanguage] = useState('JavaScript')
   const [value, setValue] = useState('')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [publicSnippet, setPublicSnippet] = useState(true)
-  const [editMessage, setEditMessage] = useState('')
-  const [editName, setEditName] = useState('')
   const [category, setCategory] = useState([])
   const [categoryInput, setCategoryInput] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState([])
   const dispatch = useDispatch()
-  const { snippetID } = useParams()
-  const snippet = state.oneSnippet
   useEffect(() => {
-    if (snippetID) {
-      dispatch(getOneSnippet(snippetID))
-    }
+    dispatch(getOneSnippet(snippetID))
   }, [dispatch, snippetID])
-
   useEffect(() => {
-    if (!state.loading && snippet) {
-      console.log(snippet)
-      setValue(snippet.code)
-      setName(snippet.name)
-      setDescription(snippet.description)
-      setPublicSnippet(snippet.publicSnippet)
-      setSelectedLanguage(snippet.coding_language)
-      setSelectedCategories(snippet.categories)
+    if (!loading && oneSnippet) {
+      setValue(oneSnippet.code)
+      setName(oneSnippet.name)
+      setDescription(oneSnippet.description)
+      setPublicSnippet(oneSnippet.publicSnippet)
+      setSelectedCategories(oneSnippet.categories)
+      setCodingLanguage(oneSnippet.coding_language)
     }
-  }, [state.loading])
-  useEffect(() => {
-    dispatch(getCategories(user.user.id))
-  }, [dispatch, user.user.id])
-
+  }, [loading, JSON.stringify(oneSnippet)])
   const handleSubmit = (e) => {
     e.preventDefault()
     const newSnippet = {
-      snippetID,
       userId: user.user.id,
-      name,
-      description,
-      publicSnippet,
+      name: name,
+      description: description,
+      publicSnippet: publicSnippet,
       code: value,
-      coding_language: selectedLanguage.toLowerCase(),
+      coding_language: selectedCodinglanguage.toLowerCase(),
       categories: selectedCategories,
     }
-    const obj = {
-      snippetUpdates: newSnippet,
-      editMessage,
-      editName,
-    }
-    // console.log(newSnippet)
-    dispatch(editSnippet(obj))
+    console.log(newSnippet)
+    dispatch(addSnippet(newSnippet))
   }
+
   const handleAddCategory = (e) => {
     e.preventDefault()
     dispatch(addCategory(category))
     setCategory('')
     setCategoryInput(false)
   }
-  if (state.loading) {
+  useEffect(() => {
+    dispatch(getCategories(user.user.id))
+  }, [dispatch, user.user.id])
+  // console.log(selectedCategories)
+  // console.log(snippets)
+  if (loading) {
     return <Loading />
   }
   return (
@@ -116,7 +108,11 @@ const EditSnippet = () => {
       <div className="lg:flex w-[90%] max-lg:flex max-lg:flex-col max-lg:items-center max-lg:my-5">
         <div className="mt-5 flex flex-col gap-3 justify-center items-center h-full w-[55%] max-lg:w-5/6 max-lg:ml-5 max-lg:my-10">
           <div className="w-full">
-            <h1 className="subHeader">Edit '{name}'</h1>
+            <h1 className="subHeader">Create a new snippet</h1>
+            <p className="font-lato text-sm text-default-500 italic mt-1 p-1">
+              A code snippet is a piece of code that you can use as and when
+              required.
+            </p>
           </div>
           <div className="w-full">
             <div className="inline-flex gap-3 items-center p-3 bg-gray-50 rounded-md">
@@ -124,7 +120,7 @@ const EditSnippet = () => {
                 src={`${user.user.imageUrl}`}
                 className="rounded-full h-8"
                 alt="user"
-              />
+              ></img>
               <span>{user.user.fullName}</span>
             </div>
           </div>
@@ -143,19 +139,6 @@ const EditSnippet = () => {
               />
             </div>
             <div className="flex flex-col gap-2 w-4/5">
-              <label className="font-lato text-sm text-default-500 w-full">
-                Edit Name
-              </label>
-              <input
-                type="text"
-                className="border-2 border-gray-200 rounded-md p-2"
-                value={editName}
-                onChange={(e) => {
-                  setEditName(e.target.value)
-                }}
-              />
-            </div>
-            <div className="flex flex-col gap-2 w-4/5">
               <label className="font-lato text-sm text-default-500">
                 Snippet Description
               </label>
@@ -164,18 +147,6 @@ const EditSnippet = () => {
                 value={description}
                 onChange={(e) => {
                   setDescription(e.target.value)
-                }}
-              />
-            </div>
-            <div className="flex flex-col gap-2 w-4/5">
-              <label className="font-lato text-sm text-default-500">
-                Edit Message
-              </label>
-              <textarea
-                className="border-2 border-gray-200 rounded-md p-2 w-full"
-                value={editMessage}
-                onChange={(e) => {
-                  setEditMessage(e.target.value)
                 }}
               />
             </div>
@@ -249,26 +220,31 @@ const EditSnippet = () => {
                   </p>
                 </div>
               </div>
-              <Dropdown>
+              <Dropdown className="">
                 <DropdownTrigger>
                   <Button variant="bordered">
                     <h1 className="font-semibold text-sm">
-                      {selectedLanguage || 'JavaScript'}
+                      {selectedCodinglanguage || 'JavaScript'}
                     </h1>
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
                   variant="faded"
                   aria-label="Dropdown menu with icons"
+                  selectionMode="single"
                 >
-                  {languages.map((language) => (
-                    <DropdownItem
-                      key={language}
-                      onClick={() => setSelectedLanguage(language)}
-                    >
-                      {language}
-                    </DropdownItem>
-                  ))}
+                  {languages.map((language) => {
+                    return (
+                      <DropdownItem
+                        key={language}
+                        onClick={() => {
+                          setCodingLanguage(language)
+                        }}
+                      >
+                        {language}
+                      </DropdownItem>
+                    )
+                  })}
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -279,9 +255,12 @@ const EditSnippet = () => {
             Preview
           </span>
           <CodeEditorComponent
-            mode={selectedLanguage || 'JavaScript'}
+            mode={selectedCodinglanguage || 'JavaScript'}
             value={value}
-            onChange={(newValue) => setValue(newValue)}
+            onChange={(newValue) => {
+              setValue(newValue)
+              // console.log(newValue)
+            }}
             className="py-5"
           />
         </div>
@@ -297,4 +276,4 @@ const EditSnippet = () => {
   )
 }
 
-export default EditSnippet
+export default CreateSnippet

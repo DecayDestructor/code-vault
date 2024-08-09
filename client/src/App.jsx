@@ -46,6 +46,10 @@ const ExplorePage = lazy(() => {
   return import('./pages/ExplorePage')
 })
 
+const ForkSnippet = lazy(() => {
+  return import('./pages/ForkSnippet')
+})
+
 const App = () => {
   return (
     <div className="bg-white h-screen w-screen">
@@ -88,6 +92,10 @@ const App = () => {
               <Route
                 path="/explore-snippets/:searchParam"
                 element={<ExplorePage />}
+              />
+              <Route
+                path="/fork-snippet/:snippetID"
+                element={<WithAuth Component={ForkSnippet} />}
               />
             </Route>
             <Route

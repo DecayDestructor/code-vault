@@ -8,7 +8,7 @@ import {
 } from '../../redux/slices/codeSnippet'
 import { Search, Bookmark, GitFork, Heart } from 'lucide-react'
 import Loading from '../Components/Loading'
-import { Tooltip } from '@nextui-org/react'
+import { snippet, Tooltip } from '@nextui-org/react'
 import { motion } from 'framer-motion'
 import { useUser } from '@clerk/clerk-react'
 import { getUser, registerUser } from '../../redux/slices/userManagement'
@@ -83,11 +83,13 @@ const SnippetCard = ({
       <div className="flex gap-5 justify-between items-center">
         <Tooltip content="Fork">
           <button disabled={!isSignedIn}>
-            <GitFork
-              size={18}
-              fill={forked ? 'black' : 'none'}
-              color={isSignedIn ? 'black' : 'grey'}
-            />
+            <Link to={`/fork-snippet/${snippetID}`}>
+              <GitFork
+                size={18}
+                fill={forked ? 'black' : 'none'}
+                color={isSignedIn ? 'black' : 'grey'}
+              />
+            </Link>
           </button>
         </Tooltip>
         <Tooltip content="Like Snippet">
