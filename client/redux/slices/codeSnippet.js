@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, isPending } from '@reduxjs/toolkit'
 
 import axios from 'axios'
+import { Trophy } from 'lucide-react'
 import { toast } from 'sonner'
 
 export const addSnippet = createAsyncThunk('addSnippet', async (snippet) => {
@@ -205,6 +206,45 @@ export const handleSave = createAsyncThunk('handleSave', async (obj) => {
   }
 })
 
+export const getLikedSnippets = createAsyncThunk(
+  'getLikedSnippets',
+  async (userId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/code-snippets/getLikedSnippets/${userId}`
+      )
+      return response.data
+    } catch (err) {
+      console.error(err)
+      const errorMessage =
+        err.response?.data?.message || err.message || 'Something went wrong'
+      toast.error(`${errorMessage}`, {
+        duration: 3000,
+      })
+    }
+  }
+)
+export const getBookmarkedSnippets = createAsyncThunk(
+  'getBookmarkedSnippets',
+  async (userId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/code-snippets/getBookmarkedSnippets/${userId}`
+      )
+      console.log(response.data)
+
+      return response.data
+    } catch (err) {
+      console.error(err)
+      const errorMessage =
+        err.response?.data?.message || err.message || 'Something went wrong'
+      toast.error(`${errorMessage}`, {
+        duration: 3000,
+      })
+    }
+  }
+)
+
 const snippetSlice = createSlice({
   name: 'fetchSnippet',
   initialState: {
@@ -215,6 +255,8 @@ const snippetSlice = createSlice({
     edits: [],
     categories: [],
     exploreSnippets: [],
+    likedSnippets: [],
+    savedSnippets: [],
   },
   reducers: {
     addCategory: (state, action) => {
@@ -419,6 +461,46 @@ const snippetSlice = createSlice({
       }
     })
     builder.addCase(handleSave.rejected, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        error: action.error.message,
+      }
+    })
+    builder.addCase(getLikedSnippets.pending, (state) => {
+      return {
+        ...state,
+        loading: true,
+      }
+    })
+    builder.addCase(getLikedSnippets.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        likedSnippets: action.payload,
+      }
+    })
+    builder.addCase(getLikedSnippets.rejected, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        error: action.error.message,
+      }
+    })
+    builder.addCase(getBookmarkedSnippets.pending, (state) => {
+      return {
+        ...state,
+        loading: true,
+      }
+    })
+    builder.addCase(getBookmarkedSnippets.fulfilled, (state, action) => {
+      return {
+        ...state,
+        loading: false,
+        savedSnippets: action.payload,
+      }
+    })
+    builder.addCase(getBookmarkedSnippets.rejected, (state, action) => {
       return {
         ...state,
         loading: false,
