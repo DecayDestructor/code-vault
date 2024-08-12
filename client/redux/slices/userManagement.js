@@ -133,7 +133,6 @@ const userStateSlice = createSlice({
 
     builder.addCase(allowAccess.fulfilled, (state, action) => {
       const email = action.payload.user.email
-      console.log(email)
 
       return {
         ...state,

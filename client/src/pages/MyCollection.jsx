@@ -176,7 +176,6 @@ export default function MyCollection() {
       setLocalSavedSnippets(snippetReducer.savedSnippets)
     }
   })
-  console.log(snippetReducer)
 
   return (
     <div className="h-full w-full flex flex-col mt-5 px-4 gap-5 items-center font-inter-tight">
@@ -195,7 +194,7 @@ export default function MyCollection() {
                   animate="visible"
                   variants={parentVariant}
                 >
-                  {localLikedSnippets.length > 0 ? (
+                  {localLikedSnippets?.length > 0 ? (
                     localLikedSnippets.map((snippet) => (
                       <SnippetCard
                         key={snippet.snippetID}

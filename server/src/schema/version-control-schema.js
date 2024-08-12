@@ -3,7 +3,6 @@ const versonControlSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
   },
   userId: {
     type: String,
@@ -40,6 +39,7 @@ const versonControlSchema = new mongoose.Schema({
   editID: {
     type: String,
     required: true,
+    unique: true,
     unique: true,
   },
 })

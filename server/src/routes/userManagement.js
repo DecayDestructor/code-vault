@@ -6,7 +6,6 @@ const router = express.Router()
 //create a get request to get the user with the userId from frontend
 
 router.get('/getUser/:userId', async (req, res) => {
-  // console.log('get request to get the user with the userId')
   const { userId } = req.params
   try {
     const user = await UserModel.findOne({ userId: userId })
@@ -41,8 +40,7 @@ router.post('/add-access', async (req, res) => {
       return res.status(404).send({ message: 'User not found.' })
     }
     const record = await codeSnippet.findOne({ snippetID: snippetId }) //find the targeted snippet using snippetID
-    // console.log(record)
-    // console.log(user)
+
     if (!record) {
       return res.status(404).send({ message: 'Snippet not found.' })
     }

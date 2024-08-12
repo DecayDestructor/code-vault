@@ -45,8 +45,6 @@ const VersionControl = () => {
     )
   }, [snippet.versionControlReducer.edits])
 
-  // console.log(localEdits)
-
   useEffect(() => {
     const nameFilter = searchParams.get('name')?.toLowerCase() || ''
     const filtered = localEdits.filter((edit) => {

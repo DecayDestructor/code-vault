@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid'
 const router = express.Router()
 
 router.get('/getAllByUserID/:userId/:page', async (req, res) => {
-  // console.log('get request')
   const { userId } = req.params
   const { page } = req.params || 0
   const pageNumber = parseInt(page, 10)
@@ -44,7 +43,6 @@ router.get('/getOneBySnippetID/:id', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-  // console.log('post request')
   const snippetID = uuidv4()
   const date = new Date()
   const snippet = new codeSnippet({
@@ -75,11 +73,10 @@ router.post('/', async (req, res) => {
 // add one get route to get all the allowedUsers to a snippet
 
 router.delete('/:id', async (req, res) => {
-  console.log('Delete')
   try {
     const id = req.params.id
     const record = await codeSnippet.findOneAndDelete({ snippetID: id })
-    console.log(record)
+
     if (!record) {
       return res.status(404).send({ message: 'Snippet not found.' })
     }
@@ -93,7 +90,7 @@ router.delete('/:id', async (req, res) => {
 
 router.put('/restore', async (req, res) => {
   const snippet = req.body
-  console.log(snippet)
+
   try {
     const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
       { snippetID: snippet.snippetID },
@@ -117,7 +114,6 @@ router.put('/restore', async (req, res) => {
 })
 
 router.get('/getCategoriesByUserID/:userId', async (req, res) => {
-  console.log('categories')
   const { userId } = req.params
   try {
     const categories = await codeSnippet
@@ -128,7 +124,7 @@ router.get('/getCategoriesByUserID/:userId', async (req, res) => {
       .sort({
         name: 1,
       })
-    console.log(categories)
+
     return res.status(200).send(categories)
   } catch (err) {
     console.error(err)
@@ -187,7 +183,6 @@ router.put('/handleLike', async (req, res) => {
         { $addToSet: { likes: userId } },
         { new: true }
       )
-      console.log(updatedSnippetDoc)
 
       res.json(updatedSnippetDoc)
     } catch (error) {
@@ -201,7 +196,7 @@ router.put('/handleLike', async (req, res) => {
         { $pull: { likes: userId } },
         { new: true }
       )
-      console.log(updatedSnippetDoc)
+
       res.json(updatedSnippetDoc)
     } catch (error) {
       res.status(500).send({ message: 'Server Error.' })

@@ -5,7 +5,6 @@ import { Trophy } from 'lucide-react'
 import { toast } from 'sonner'
 
 export const addSnippet = createAsyncThunk('addSnippet', async (snippet) => {
-  console.log(snippet)
   try {
     const response = await axios.post(
       'http://localhost:5000/code-snippets/',
@@ -108,7 +107,6 @@ export const editSnippet = createAsyncThunk('editSnippet', async (snippet) => {
 export const restoreVersion = createAsyncThunk(
   'restoreVersion',
   async (snippet) => {
-    console.log(snippet)
     try {
       const response = await axios.put(
         `http://localhost:5000/code-snippets/restore`,
@@ -150,8 +148,6 @@ export const getCategories = createAsyncThunk(
 export const getExploreSnippets = createAsyncThunk(
   'getExploreSnippets',
   async (searchParam) => {
-    console.log(searchParam)
-
     try {
       const response = await axios.get(
         `http://localhost:5000/code-snippets/getAllBySearchParam/${searchParam}`
@@ -170,8 +166,6 @@ export const getExploreSnippets = createAsyncThunk(
 )
 
 export const handleLike = createAsyncThunk('handleLike', async (obj) => {
-  console.log(obj)
-
   try {
     const response = await axios.put(
       `http://localhost:5000/code-snippets/handleLike`,
@@ -189,7 +183,6 @@ export const handleLike = createAsyncThunk('handleLike', async (obj) => {
 })
 
 export const handleSave = createAsyncThunk('handleSave', async (obj) => {
-  console.log(obj)
   try {
     const response = await axios.put(
       'http://localhost:5000/code-snippets/handleBookmark',
@@ -231,7 +224,6 @@ export const getBookmarkedSnippets = createAsyncThunk(
       const response = await axios.get(
         `http://localhost:5000/code-snippets/getBookmarkedSnippets/${userId}`
       )
-      console.log(response.data)
 
       return response.data
     } catch (err) {
@@ -272,7 +264,6 @@ const snippetSlice = createSlice({
       state.loading = true
     })
     builder.addCase(addSnippet.fulfilled, (state, action) => {
-      console.log(action.payload)
       return {
         ...state,
         loading: false,
@@ -322,8 +313,12 @@ const snippetSlice = createSlice({
       state.loading = true
     })
     builder.addCase(editSnippet.fulfilled, (state, action) => {
-      console.log(state.snippets)
-      console.log(action.payload)
+      if (!action.payload) {
+        return {
+          ...state,
+          loading: false,
+        }
+      }
       return {
         ...state,
         loading: false,
@@ -374,15 +369,10 @@ const snippetSlice = createSlice({
       }
     })
     builder.addCase(getCategories.fulfilled, (state, action) => {
-      const newCategories = action.payload.filter(
-        (category) => !state.categories.includes(category)
-      )
-      console.log('new categories :' + newCategories)
-
       return {
         ...state,
         loading: false,
-        categories: [...state.categories, ...newCategories],
+        categories: action.payload,
       }
     })
     builder.addCase(getCategories.rejected, (state, action) => {
@@ -418,14 +408,6 @@ const snippetSlice = createSlice({
       }
     })
     builder.addCase(handleLike.fulfilled, (state, action) => {
-      console.log(state.exploreSnippets)
-
-      console.log(
-        state.exploreSnippets.filter(
-          (snippet) => snippet.snippetID === action.payload.snippetID
-        )
-      )
-
       return {
         ...state,
         loading: false,

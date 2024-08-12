@@ -8,7 +8,31 @@ import SnippetsList from '../Components/SnippetsList'
 import { MoonLoader } from 'react-spinners'
 import Loading from '../Components/Loading'
 import CategoryCheckBox from '../Components/CategoryCheckBox'
+import { motion } from 'framer-motion'
 const UserSnippets = () => {
+  const parentVariant = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: 'easeInOut',
+        staggerChildren: 0.2,
+        delayChildren: 0.2,
+      },
+    },
+  }
+
+  const childrenVariant = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.3, ease: 'backOut' },
+    },
+  }
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const snippets = useSelector((state) => state.snippetReducer)

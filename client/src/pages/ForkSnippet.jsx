@@ -85,7 +85,7 @@ const CreateSnippet = () => {
       coding_language: selectedCodinglanguage.toLowerCase(),
       categories: selectedCategories,
     }
-    console.log(newSnippet)
+
     dispatch(addSnippet(newSnippet))
   }
 
@@ -98,8 +98,7 @@ const CreateSnippet = () => {
   useEffect(() => {
     dispatch(getCategories(user.user.id))
   }, [dispatch, user.user.id])
-  // console.log(selectedCategories)
-  // console.log(snippets)
+
   if (loading) {
     return <Loading />
   }
@@ -259,7 +258,6 @@ const CreateSnippet = () => {
             value={value}
             onChange={(newValue) => {
               setValue(newValue)
-              // console.log(newValue)
             }}
             className="py-5"
           />

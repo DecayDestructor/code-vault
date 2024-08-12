@@ -43,8 +43,6 @@ const CodeEditorComponent = ({ mode, className, value, onChange }) => {
 }
 
 const CreateSnippet = () => {
-  // const state = useSelector((state) => state.snippetReducer)
-  // console.log(state)
   const user = useUser()
   const [selectedCodinglanguage, setCodingLanguage] = useState('JavaScript')
   const [value, setValue] = useState('')
@@ -67,7 +65,7 @@ const CreateSnippet = () => {
       coding_language: selectedCodinglanguage.toLowerCase(),
       categories: selectedCategories,
     }
-    console.log(newSnippet)
+
     dispatch(addSnippet(newSnippet))
   }
 
@@ -80,8 +78,7 @@ const CreateSnippet = () => {
   useEffect(() => {
     dispatch(getCategories(user.user.id))
   }, [dispatch, user.user.id])
-  // console.log(selectedCategories)
-  // console.log(snippets)
+
   return (
     <form className="flex flex-col items-center gap-6" onSubmit={handleSubmit}>
       <div className="lg:flex w-[90%] max-lg:flex max-lg:flex-col max-lg:items-center max-lg:my-5">
@@ -238,7 +235,6 @@ const CreateSnippet = () => {
             value={value}
             onChange={(newValue) => {
               setValue(newValue)
-              // console.log(newValue)
             }}
             className="py-5"
           />

@@ -31,7 +31,6 @@ const Snippet = () => {
         const response = await axios.get(
           `http://localhost:5000/user-management/get-owner/${snippetID}`
         )
-        console.log(response)
 
         setName(response.data.name)
         setProfilePicture(response.data.profilePicture)
@@ -52,8 +51,6 @@ const Snippet = () => {
       </div>
     )
   }
-
-  console.log(editReducer.oneEdit)
 
   if (!snippet.oneSnippet || !editReducer.oneEdit) {
     return (
@@ -80,7 +77,6 @@ const Snippet = () => {
     ...snippet.oneSnippet,
     ...editReducer.oneEdit?.diff?.previous,
   }
-  console.log(restoreSnippet)
   return (
     <div className=" flex flex-col m-auto mt-16 font-inter-tight w-[80%] h-[80%] gap-10">
       <div className="flex justify-between max-lg:flex-col gap-4">

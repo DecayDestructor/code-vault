@@ -17,7 +17,7 @@ export default function SelectCategory({
   const [selectedKeys, setSelectedKeys] = React.useState(
     new Set(selectedCategories)
   )
-  const categories = useSelector((state) => state.snippetReducer.categories) // console.log(categories)
+  const categories = useSelector((state) => state.snippetReducer.categories)
   const selectedCategoriesFunction = useCallback(
     () => [...selectedKeys],
     [selectedKeys]

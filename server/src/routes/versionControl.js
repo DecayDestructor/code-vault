@@ -45,8 +45,6 @@ router.put('/edit', async (req, res) => {
       .send({ message: 'Edit message and name are required.' })
   }
 
-  console.log('update snippet')
-  console.log(snippetUpdates)
   try {
     const record = await codeSnippet.findOne({
       snippetID: snippetUpdates.snippetID,
@@ -68,27 +66,24 @@ router.put('/edit', async (req, res) => {
       ...recordObj,
       ...snippetUpdates,
     }
-    console.log(recordObj)
-    console.log(updatedSnippet)
+
     // Check if updatedSnippet is equal to record before attempting update
     if (JSON.stringify(updatedSnippet) === JSON.stringify(recordObj)) {
-      console.log('No changes detected')
       return res.status(400).send({
         record,
         message: 'No changes detected. No update performed.',
       }) // Return the unchanged record
     }
+    const existingVersion = await VersionControl.find({
+      editName,
+    })
+    if (existingVersion.length > 0) {
+      return res.status(409).send({ message: 'Edit name already exists.' })
+    }
 
     const updatedSnippetDoc = await codeSnippet.findOneAndUpdate(
       { snippetID: snippetUpdates.snippetID },
       {
-        // name: snippetUpdates.name,
-        // publicSnippet: snippetUpdates.publicSnippet,
-        // description: snippetUpdates.description,
-        // code: snippetUpdates.code,
-        // language: snippetUpdates.language,
-
-        // categories: snippetUpdates.categories,
         ...snippetUpdates,
         version: record.version + 1,
       },
@@ -99,7 +94,6 @@ router.put('/edit', async (req, res) => {
       recordObj,
       snippetUpdates
     )
-    console.log(versionControlSnippet)
     const newSnippet = new VersionControl({
       snippetID: snippetUpdates.snippetID,
       version: record.version,
@@ -113,7 +107,6 @@ router.put('/edit', async (req, res) => {
     await newSnippet.save()
     return res.status(200).send(updatedSnippetDoc)
   } catch (error) {
-    console.log(error)
     return res.status(500).send(error)
   }
 })

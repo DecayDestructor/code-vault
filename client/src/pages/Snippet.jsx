@@ -31,7 +31,6 @@ const Snippet = () => {
         const response = await axios.get(
           `http://localhost:5000/user-management/get-owner/${snippetID}`
         )
-        console.log(response)
 
         setName(response.data.name)
         setProfilePicture(response.data.profilePicture)
@@ -54,7 +53,11 @@ const Snippet = () => {
           `,
           url: window.location.href,
         })
-        .then(() => console.log('Link shared successfully'))
+        .then(() =>
+          toast.success('Link shared successfully', {
+            duration: 3000,
+          })
+        )
         .catch((error) => console.error('Error sharing the link', error))
     } else {
       toast.error('Web Share API is not supported in your browser.')
@@ -77,14 +80,22 @@ const Snippet = () => {
       </div>
     )
   }
-  if (
-    (!snippet.oneSnippet.publicSnippet && !isSignedIn) ||
-    (isSignedIn &&
-      snippet.oneSnippet.userId !== user.id &&
-      !snippet.oneSnippet.allowedUsers.includes(
-        user.primaryEmailAddress.emailAddress
-      ))
-  ) {
+  // if (
+  //   (!snippet.oneSnippet.publicSnippet && !isSignedIn) ||
+  //   (isSignedIn &&
+  //     snippet.oneSnippet.userId !== user.id &&
+  //     !snippet.oneSnippet.allowedUsers.includes(
+  //       user.primaryEmailAddress.emailAddress
+  //     ))
+  // ) {
+  //   return (
+  //     <div className="h-full w-full flex items-center justify-center flex-col gap-5">
+  //       <ShieldAlert size={'40%'} color="maroon" />
+  //       <p className="descriptionText">This snippet is private!</p>
+  //     </div>
+  //   )
+  // }
+  if (!snippet.oneSnippet.publicSnippet && !isSignedIn) {
     return (
       <div className="h-full w-full flex items-center justify-center flex-col gap-5">
         <ShieldAlert size={'40%'} color="maroon" />
@@ -92,6 +103,24 @@ const Snippet = () => {
       </div>
     )
   }
+  if (
+    !snippet.oneSnippet.publicSnippet &&
+    snippet.oneSnippet.userId !== user.id &&
+    !snippet.oneSnippet.allowedUsers.includes(
+      user.primaryEmailAddress.emailAddress
+    )
+  ) {
+    return (
+      <div className="h-full w-full flex items-center justify-center flex-col gap-5">
+        <ShieldAlert size={'40%'} color="maroon" />
+        <p className="descriptionText">
+          Only the snippet owner and the users listed as allowed can view this
+          snippet.
+        </p>
+      </div>
+    )
+  }
+
   const editDate = new Date(snippet.oneSnippet?.date)?.toDateString()
 
   return (

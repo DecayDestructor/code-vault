@@ -7,7 +7,6 @@ const WithAuth = ({ Component, rest }) => {
   // Destructure 'component' from props
 
   if (!isSignedIn) {
-    console.log('not signed in')
     // Redirect to login page if user is not authenticated
     return <Navigate to="/login" />
   }
